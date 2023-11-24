@@ -46,12 +46,11 @@ public class FlyD extends AbstractCheck {
                     data.VELOCITY ||
                     data.SLIME ||
                     difference == 0.015555072702198913D ||
-                    difference == 0.08000001311302185 && deltaY == 0.5D;
+                    (difference == 0.08000001311302185 && deltaY == 0.5D) ||
+                    difference == 0.4983999884128574 ||
+                    difference == 0.4983999884128565;
 
-                //boolean invalid = deltaY > maxJumpHeight;
-                //boolean invalid2 = deltaY < maxJumpHeight && deltaY > -1E-10D;
-
-                boolean invalid = difference > 1E-4 && deltaY > -1E-10D;
+                boolean invalid = difference > 1E-6;
 
                 if(invalid && !exempt) {
                     this.fail("diff=" + difference, "delta=" + deltaY, "expected=" + maxJumpHeight);

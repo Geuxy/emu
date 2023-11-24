@@ -1,5 +1,7 @@
 package me.geuxy.emu.data;
 
+import io.github.retrooper.packetevents.packetwrappers.play.in.flying.WrappedPacketInFlying;
+import io.github.retrooper.packetevents.packetwrappers.play.in.transaction.WrappedPacketInTransaction;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -8,11 +10,9 @@ import me.geuxy.emu.Emu;
 import me.geuxy.emu.check.AbstractCheck;
 import me.geuxy.emu.data.processors.ActionProcessor;
 import me.geuxy.emu.data.processors.PositionProcessor;
-import me.geuxy.emu.data.processors.RotationProcessor;
 import me.geuxy.emu.data.processors.VelocityProcessor;
-import me.geuxy.emu.packet.Packet;
-import me.geuxy.emu.utils.BlockUtils;
-import me.geuxy.emu.utils.BoundingBox;
+import me.geuxy.emu.utils.world.BlockUtils;
+import me.geuxy.emu.utils.entity.BoundingBox;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -31,7 +31,6 @@ public class PlayerData {
     private final Player player;
 
     private final PositionProcessor positionProcessor = new PositionProcessor(this);
-    private final RotationProcessor rotationProcessor = new RotationProcessor(this);
     private final VelocityProcessor velocityProcessor = new VelocityProcessor(this);
     private final ActionProcessor actionProcessor = new ActionProcessor(this);
 
@@ -58,16 +57,11 @@ public class PlayerData {
     @Setter
     private boolean alertsEnabled;
 
-    public void handlePosition(Packet packet) {
+    public void handleFlying(WrappedPacketInFlying packet) {
         positionProcessor.handle(packet);
 
         this.handleCollision();
         this.handleFlying();
-    }
-
-    public void handlePositionLook(Packet packet) {
-        rotationProcessor.handle(packet);
-        handlePosition(packet);
     }
 
     public void handleCollision() {
@@ -99,7 +93,7 @@ public class PlayerData {
         this.RIDING = positionProcessor.getOutVehicleTicks() < 3;
         this.LIVING = actionProcessor.getLivingTicks() < 3;
         this.ALLOWED_FLYING = player.getAllowFlight();
-        this.BLOCK_ABOVE = BlockUtils.getBlock(player.getLocation().add(0D, 2D, 0D)) != null;
+        this.BLOCK_ABOVE = isSolidAbove();
         this.CLIMBABLE = BlockUtils.isClimbable(player.getLocation()) || BlockUtils.isClimbable(bodyLoc);
         this.LIQUID = BlockUtils.isLiquid(player.getLocation()) || BlockUtils.isLiquid(bodyLoc);
         this.ICE = BlockUtils.isIce(bottomLoc);
@@ -134,7 +128,7 @@ public class PlayerData {
         actionProcessor.handleRespawn();
     }
 
-    public void handleTransaction(Packet packet) {
+    public void handleTransaction(WrappedPacketInTransaction packet) {
         velocityProcessor.handleTransaction(packet);
     }
 
@@ -160,6 +154,22 @@ public class PlayerData {
 
     public PotionEffect getEffect(PotionEffectType type) {
         return player.getActivePotionEffects().stream().filter(e -> e.getType().equals(type)).findFirst().orElse(null);
+    }
+
+    private boolean isSolidAbove() {
+        for(double x = -0.3; x < 0.6; x += 0.3) {
+            for (double z = -0.3; z < 0.6; z += 0.3) {
+                Location playerLoc = player.getLocation();
+                Location loc = new Location(player.getWorld(), playerLoc.getX() + x, playerLoc.getY() + 2, playerLoc.getZ() + z);
+
+                Block block = BlockUtils.getBlock(loc);
+
+                if (block != null && block.getType().isSolid()) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
 }

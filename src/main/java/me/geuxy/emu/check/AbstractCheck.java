@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import me.geuxy.emu.config.ConfigValues;
 import me.geuxy.emu.data.PlayerData;
 import me.geuxy.emu.packet.Packet;
-import me.geuxy.emu.utils.StringUtils;
+import me.geuxy.emu.utils.string.StringUtils;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;

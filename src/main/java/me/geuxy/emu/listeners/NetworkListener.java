@@ -1,46 +1,34 @@
 package me.geuxy.emu.listeners;
 
-import com.comphenix.protocol.PacketType.Play;
-import com.comphenix.protocol.events.PacketAdapter;
-import com.comphenix.protocol.events.PacketEvent;
+import io.github.retrooper.packetevents.event.impl.PacketPlayReceiveEvent;
+import io.github.retrooper.packetevents.event.impl.PacketPlaySendEvent;
+import io.github.retrooper.packetevents.event.PacketListenerAbstract;
 
 import me.geuxy.emu.Emu;
 import me.geuxy.emu.data.PlayerData;
 import me.geuxy.emu.packet.Packet;
-import org.bukkit.plugin.java.JavaPlugin;
 
-public class NetworkListener extends PacketAdapter {
+public class NetworkListener extends PacketListenerAbstract {
 
-    public NetworkListener(JavaPlugin plugin) {
-        super(plugin,
+    @Override
+    public void onPacketPlayReceive(PacketPlayReceiveEvent event) {
+        PlayerData data = Emu.INSTANCE.getDataManager().get(event.getPlayer());
+        Packet packet = new Packet(event.getNMSPacket(), event.getPacketId());
 
-            // Client
-            Play.Client.POSITION,
-            Play.Client.POSITION_LOOK,
-            Play.Client.LOOK,
-            Play.Client.USE_ENTITY,
-            Play.Client.FLYING,
-
-            // Server
-            Play.Server.ENTITY_VELOCITY,
-            Play.Server.EXPLOSION
-        );
+        if(data != null) {
+            Emu.INSTANCE.getPacketProcessor().handleReceive(data, packet);
+        }
     }
 
     @Override
-    public void onPacketReceiving(PacketEvent event) {
+    public void onPacketPlaySend(PacketPlaySendEvent event) {
         PlayerData data = Emu.INSTANCE.getDataManager().get(event.getPlayer());
-        Packet packet = new Packet(event.getPacket());
+        Packet packet = new Packet(event.getNMSPacket(), event.getPacketId());
 
-        Emu.INSTANCE.getPacketProcessor().handleReceive(data, packet);
+        if(data != null) {
+            Emu.INSTANCE.getPacketProcessor().handleSend(data, packet);
+        }
     }
 
-    @Override
-    public void onPacketSending(PacketEvent event) {
-        PlayerData data = Emu.INSTANCE.getDataManager().get(event.getPlayer());
-        Packet packet = new Packet(event.getPacket());
-
-        Emu.INSTANCE.getPacketProcessor().handleSend(data, packet);
-    }
 
 }

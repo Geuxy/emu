@@ -18,8 +18,8 @@ public class BadPacketsA extends AbstractCheck {
 
     @Override
     public void processPacket(Packet packet) {
-        if(packet.isMove()) {
-            float pitch = data.getRotationProcessor().getPitch();
+        if(packet.isFlying()) {
+            float pitch = data.getPositionProcessor().getPitch();
 
             if(pitch > 90) {
                 this.fail("max=90", "pitch=" + pitch);

@@ -18,7 +18,7 @@ public class VelocityA extends AbstractCheck {
 
     @Override
     public void processPacket(Packet packet) {
-        if (packet.isMove() && data.getVelocityProcessor().getVelocityTicks() == 1) {
+        if (packet.isFlying() && data.getVelocityProcessor().getVelocityTicks() == 1) {
             double deltaY = data.getPositionProcessor().getDeltaY();
             double velocityY = data.getVelocityProcessor().getY();
 

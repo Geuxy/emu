@@ -11,7 +11,6 @@ import me.geuxy.emu.check.impl.move.speed.*;
 import me.geuxy.emu.check.impl.move.step.*;
 import me.geuxy.emu.check.impl.packet.badpackets.*;
 import me.geuxy.emu.check.impl.packet.timer.*;
-import me.geuxy.emu.check.impl.player.post.*;
 import me.geuxy.emu.check.impl.player.ground.*;
 import me.geuxy.emu.check.AbstractCheck;
 import me.geuxy.emu.data.PlayerData;
@@ -36,16 +35,20 @@ public class CheckManager {
 
             FlyA.class,
             FlyB.class,
-            ClimbB.class,
+
             JumpA.class,
 
             SpeedA.class,
             SpeedB.class,
-            JesusA.class,
-            ClimbA.class,
-            NoSlowA.class,
-            SpeedD.class,
             SpeedC.class,
+            SpeedD.class,
+
+            JesusA.class,
+
+            ClimbB.class,
+            ClimbA.class,
+
+            NoSlowA.class,
 
             StepA.class,
             StepB.class,
@@ -55,7 +58,6 @@ public class CheckManager {
             TimerA.class,
             TimerB.class,
 
-            PostA.class,
             GroundA.class
         );
 

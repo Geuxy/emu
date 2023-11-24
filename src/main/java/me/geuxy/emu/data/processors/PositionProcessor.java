@@ -1,16 +1,23 @@
 package me.geuxy.emu.data.processors;
 
+import io.github.retrooper.packetevents.packetwrappers.play.in.flying.WrappedPacketInFlying;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import me.geuxy.emu.data.PlayerData;
 import me.geuxy.emu.packet.Packet;
-import me.geuxy.emu.utils.MathUtil;
+import me.geuxy.emu.utils.entity.BoundingBox;
+import me.geuxy.emu.utils.math.MathUtil;
+import me.geuxy.emu.utils.world.BlockUtils;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.util.NumberConversions;
 
 @Getter @RequiredArgsConstructor
 public class PositionProcessor {
 
     private final PlayerData data;
+
+    private float yaw, pitch, lastYaw, lastPitch, deltaYaw, deltaPitch, lastDeltaYaw, lastDeltaPitch;
 
     private double x, y, z, lastX, lastY, lastZ, deltaX, deltaY, deltaZ, lastDeltaX, lastDeltaY, lastDeltaZ, speed, lastSpeed;
     private boolean clientGround, lastClientGround;
@@ -19,14 +26,27 @@ public class PositionProcessor {
 
     private Location lastLocation;
 
-    public void handle(Packet packet) {
+    public void handle(WrappedPacketInFlying packet) {
+        boolean position = packet.isPosition();
+        boolean look = packet.isLook();
+
+        this.lastYaw = yaw;
+        this.lastPitch = pitch;
+        this.yaw = look ? packet.getYaw() : yaw;
+        this.pitch = look ? packet.getPitch() : pitch;
+
+        this.lastDeltaYaw = deltaYaw;
+        this.lastDeltaPitch = deltaPitch;
+        this.deltaYaw = Math.abs(yaw - lastYaw);
+        this.deltaPitch = Math.abs(pitch - lastPitch);
+
         this.lastX = x;
         this.lastY = y;
         this.lastZ = z;
 
-        this.x = packet.getRaw().getDoubles().read(0);
-        this.y = packet.getRaw().getDoubles().read(1);
-        this.z = packet.getRaw().getDoubles().read(2);
+        this.x = position ? packet.getX() : x;
+        this.y = position ? packet.getY() : y;
+        this.z = position ? packet.getZ() : z;
 
         this.lastDeltaX = deltaX;
         this.lastDeltaY = deltaY;
@@ -40,14 +60,10 @@ public class PositionProcessor {
 
         this.speed = MathUtil.hypot(deltaX, deltaZ);
 
-        this.handleFlying(packet);
-
-        this.lastLocation = new Location(data.getPlayer().getWorld(), lastX, lastY, lastZ, data.getRotationProcessor().getLastYaw(), data.getRotationProcessor().getLastPitch());
-    }
-
-    public void handleFlying(Packet packet) {
         this.lastClientGround = clientGround;
-        this.clientGround = packet.getRaw().getBooleans().read(0);
+        this.clientGround = packet.isOnGround();
+
+        this.lastLocation = new Location(data.getPlayer().getWorld(), lastX, lastY, lastZ, lastYaw, lastPitch);
     }
 
     public void onTick() {

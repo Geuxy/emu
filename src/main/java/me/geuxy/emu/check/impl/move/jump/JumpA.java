@@ -21,7 +21,7 @@ public class JumpA extends AbstractCheck {
 
     @Override
     public void processPacket(Packet packet) {
-        if(packet.isMove()) {
+        if(packet.isFlying()) {
             if(data.getPositionProcessor().isLastClientGround() && !data.getPositionProcessor().isClientGround()) {
                 double maxJumpHeight = 0.41999998688697815D;
 
@@ -45,10 +45,14 @@ public class JumpA extends AbstractCheck {
                     data.WEB ||
                     data.VELOCITY ||
                     data.SLIME ||
+                    data.BLOCK_ABOVE ||
                     difference == 0.015555072702198913D ||
-                    (difference == 0.08000001311302185 && deltaY == 0.5D) ||
-                    difference == 0.4983999884128574 ||
-                    difference == 0.4983999884128565;
+                    (difference == 0.08000001311302185D && deltaY == 0.5D) ||
+                    difference == 0.4983999884128574D ||
+                    difference == 0.4983999884128565D ||
+
+                    // Falling when water below
+                    difference == 0.49839998841285693D;
 
                 boolean invalid = difference > 1E-6;
 

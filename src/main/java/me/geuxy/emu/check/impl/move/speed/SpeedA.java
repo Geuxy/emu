@@ -18,7 +18,7 @@ public class SpeedA extends AbstractCheck {
 
     @Override
     public void processPacket(Packet packet) {
-        if(packet.isMove()) {
+        if(packet.isFlying()) {
             if(!data.getPositionProcessor().isLastClientGround() && !data.getPositionProcessor().isClientGround()) {
                 boolean exempt =
                     data.LIVING ||

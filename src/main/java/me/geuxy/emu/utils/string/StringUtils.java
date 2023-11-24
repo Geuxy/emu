@@ -1,4 +1,4 @@
-package me.geuxy.emu.utils;
+package me.geuxy.emu.utils.string;
 
 import me.geuxy.emu.check.AbstractCheck;
 import me.geuxy.emu.config.ConfigValues;

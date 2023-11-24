@@ -1,7 +1,6 @@
 package me.geuxy.emu;
 
-import com.comphenix.protocol.ProtocolLibrary;
-
+import io.github.retrooper.packetevents.PacketEvents;
 import lombok.Getter;
 
 import me.geuxy.emu.check.manager.CheckManager;
@@ -45,7 +44,7 @@ public enum Emu {
         checkManager.onInit();
         dataManager.onInit();
 
-        ProtocolLibrary.getProtocolManager().addPacketListener(new NetworkListener(this.plugin));
+        PacketEvents.get().registerListener(new NetworkListener());
         Bukkit.getPluginManager().registerEvents(new PlayerListener(), this.plugin);
     }
 

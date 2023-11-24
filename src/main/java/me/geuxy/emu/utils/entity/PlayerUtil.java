@@ -1,4 +1,4 @@
-package me.geuxy.emu.utils;
+package me.geuxy.emu.utils.entity;
 
 import org.bukkit.entity.*;
 

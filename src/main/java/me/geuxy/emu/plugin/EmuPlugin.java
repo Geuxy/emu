@@ -1,5 +1,6 @@
-package me.geuxy.emu;
+package me.geuxy.emu.plugin;
 
+import me.geuxy.emu.Emu;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class EmuPlugin extends JavaPlugin {

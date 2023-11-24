@@ -4,7 +4,7 @@ import me.geuxy.emu.check.AbstractCheck;
 import me.geuxy.emu.check.CheckInfo;
 import me.geuxy.emu.data.PlayerData;
 import me.geuxy.emu.packet.Packet;
-import me.geuxy.emu.utils.PlayerUtil;
+import me.geuxy.emu.utils.entity.PlayerUtil;
 
 @CheckInfo(
     name = "Fly",
@@ -19,7 +19,7 @@ public class FlyA extends AbstractCheck {
 
     @Override
     public void processPacket(Packet packet) {
-        if(packet.isMove()) {
+        if(packet.isFlying()) {
             if(!data.getPositionProcessor().isLastClientGround() && !data.getPositionProcessor().isClientGround()) {
                 double lastDeltaY = data.getPositionProcessor().getLastDeltaY();
                 double deltaY = data.getPositionProcessor().getDeltaY();
@@ -39,6 +39,7 @@ public class FlyA extends AbstractCheck {
                     data.WEB ||
                     data.LIQUID ||
                     data.CHUNK ||
+                    data.BLOCK_ABOVE ||
                     PlayerUtil.isNearBoat(data.getPlayer()) ||
                     difference == 0.7840000152587834E-1D ||
                     difference == 0.6349722830977471 ||

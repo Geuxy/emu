@@ -1,4 +1,4 @@
-package me.geuxy.emu.utils;
+package me.geuxy.emu.utils.world;
 
 import org.bukkit.Location;
 import org.bukkit.Material;

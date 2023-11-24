@@ -23,7 +23,7 @@ public class TimerB extends AbstractCheck {
 
     @Override
     public void processPacket(Packet packet) {
-        if(packet.isMove()) {
+        if(packet.isFlying()) {
             long currentTime = System.currentTimeMillis();
             long diffTime = currentTime - lastTime;
 

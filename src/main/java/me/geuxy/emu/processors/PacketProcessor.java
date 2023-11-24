@@ -1,22 +1,19 @@
 package me.geuxy.emu.processors;
 
+import io.github.retrooper.packetevents.packetwrappers.play.in.flying.WrappedPacketInFlying;
+import io.github.retrooper.packetevents.packetwrappers.play.in.transaction.WrappedPacketInTransaction;
+import io.github.retrooper.packetevents.packetwrappers.play.out.entityvelocity.WrappedPacketOutEntityVelocity;
 import me.geuxy.emu.data.PlayerData;
 import me.geuxy.emu.packet.Packet;
 
 public class PacketProcessor {
 
     public void handleReceive(PlayerData data, Packet packet) {
-        if(packet.isPosition()) {
-            data.handlePosition(packet);
-
-        } else if(packet.isFlying()) {
-                data.getPositionProcessor().handleFlying(packet);
-
-        } else if(packet.isPositionLook()) {
-            data.handlePositionLook(packet);
+        if(packet.isFlying()) {
+            data.handleFlying(new WrappedPacketInFlying(packet.getRaw()));
 
         } else if(packet.isTransaction()) {
-            data.handleTransaction(packet);
+            data.handleTransaction(new WrappedPacketInTransaction(packet.getRaw()));
         }
 
         data.getChecks().forEach(c -> c.processPacket(packet));
@@ -24,15 +21,12 @@ public class PacketProcessor {
 
     public void handleSend(PlayerData data, Packet packet) {
         if(packet.isVelocity()) {
-            int id = packet.getRaw().getIntegers().read(0);
+            WrappedPacketOutEntityVelocity wrapper = new WrappedPacketOutEntityVelocity(packet.getRaw());
 
-            if(id == data.getPlayer().getEntityId()) {
-                double velX = (double) packet.getRaw().getIntegers().read(1) / 8000;
-                double velY = (double) packet.getRaw().getIntegers().read(2) / 8000;
-                double velZ = (double) packet.getRaw().getIntegers().read(3) / 8000;
-
-                data.handleVelocity(velX, velY, velZ);
+            if(wrapper.getEntity() == data.getPlayer()) {
+                data.handleVelocity(wrapper.getVelocityX(), wrapper.getVelocityX(), wrapper.getVelocityZ());
             }
+
         } else if(packet.isExplosion()) {
             data.handleExplosion();
         }

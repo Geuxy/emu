@@ -18,7 +18,7 @@ public class SpeedC extends AbstractCheck {
 
     @Override
     public void processPacket(Packet packet) {
-        if(packet.isMove()) {
+        if(packet.isFlying()) {
             boolean exempt =
                 data.VELOCITY ||
                 data.EXPLOSION ||

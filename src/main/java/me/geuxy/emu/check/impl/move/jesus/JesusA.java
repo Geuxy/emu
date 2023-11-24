@@ -20,7 +20,7 @@ public class JesusA extends AbstractCheck {
 
     @Override
     public void processPacket(Packet packet) {
-        if(packet.isMove()) {
+        if(packet.isFlying()) {
             boolean exempt =
                 data.TELEPORTED ||
                 data.LIVING ||

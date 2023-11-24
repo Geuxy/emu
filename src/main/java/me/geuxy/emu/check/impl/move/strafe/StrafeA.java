@@ -4,7 +4,7 @@ import me.geuxy.emu.check.CheckInfo;
 import me.geuxy.emu.check.AbstractCheck;
 import me.geuxy.emu.data.PlayerData;
 import me.geuxy.emu.packet.Packet;
-import me.geuxy.emu.utils.MathUtil;
+import me.geuxy.emu.utils.math.MathUtil;
 
 @CheckInfo(
     name = "Strafe",
@@ -20,7 +20,7 @@ public class StrafeA extends AbstractCheck {
 
     @Override
     public void processPacket(Packet packet) {
-        if(packet.isMove()) {
+        if(packet.isFlying()) {
             double angle = Math.abs(MathUtil.getAngleRotation(data.getPlayer().getLocation().clone(),
                     data.getPositionProcessor().getLastLocation().clone()));
 

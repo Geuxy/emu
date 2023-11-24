@@ -4,9 +4,9 @@ import me.geuxy.emu.check.AbstractCheck;
 import me.geuxy.emu.check.CheckInfo;
 import me.geuxy.emu.data.PlayerData;
 import me.geuxy.emu.packet.Packet;
-import me.geuxy.emu.utils.BlockUtils;
+import me.geuxy.emu.utils.world.BlockUtils;
 
-import me.geuxy.emu.utils.PlayerUtil;
+import me.geuxy.emu.utils.entity.PlayerUtil;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 
@@ -25,7 +25,7 @@ public class GroundA extends AbstractCheck {
 
     @Override
     public void processPacket(Packet packet) {
-        if(packet.isMove()) {
+        if(packet.isFlying()) {
             boolean exempt =
                 data.LIVING ||
                 data.TELEPORTED ||

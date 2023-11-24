@@ -4,7 +4,7 @@ import me.geuxy.emu.check.AbstractCheck;
 import me.geuxy.emu.check.CheckInfo;
 import me.geuxy.emu.data.PlayerData;
 import me.geuxy.emu.packet.Packet;
-import me.geuxy.emu.utils.BlockUtils;
+import me.geuxy.emu.utils.world.BlockUtils;
 
 @CheckInfo(
     name = "Speed",
@@ -19,7 +19,7 @@ public class SpeedB extends AbstractCheck {
 
     @Override
     public void processPacket(Packet packet) {
-        if(packet.isMove() && data.getPositionProcessor().isClientGround()) {
+        if(packet.isFlying() && data.getPositionProcessor().isClientGround()) {
             int groundTicks = data.getPositionProcessor().getGroundTicks();
 
             double lastSpeed = data.getPositionProcessor().getLastSpeed();

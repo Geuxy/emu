@@ -1,8 +1,12 @@
 package me.geuxy.emu.check.manager;
 
 import me.geuxy.emu.check.impl.combat.killaura.KillAuraA;
-import me.geuxy.emu.check.impl.combat.velocity.VelocityA;
+import me.geuxy.emu.check.impl.move.climb.ClimbA;
+import me.geuxy.emu.check.impl.move.climb.ClimbB;
 import me.geuxy.emu.check.impl.move.fly.*;
+import me.geuxy.emu.check.impl.move.jesus.JesusA;
+import me.geuxy.emu.check.impl.move.jump.JumpA;
+import me.geuxy.emu.check.impl.move.noslow.NoSlowA;
 import me.geuxy.emu.check.impl.move.speed.*;
 import me.geuxy.emu.check.impl.move.step.*;
 import me.geuxy.emu.check.impl.packet.badpackets.*;
@@ -32,16 +36,16 @@ public class CheckManager {
 
             FlyA.class,
             FlyB.class,
-            FlyC.class,
-            FlyD.class,
+            ClimbB.class,
+            JumpA.class,
 
             SpeedA.class,
             SpeedB.class,
-            SpeedC.class,
+            JesusA.class,
+            ClimbA.class,
+            NoSlowA.class,
             SpeedD.class,
-            SpeedE.class,
-            SpeedF.class,
-            SpeedG.class,
+            SpeedC.class,
 
             StepA.class,
             StepB.class,

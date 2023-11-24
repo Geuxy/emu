@@ -15,7 +15,7 @@ public class PositionProcessor {
     private double x, y, z, lastX, lastY, lastZ, deltaX, deltaY, deltaZ, lastDeltaX, lastDeltaY, lastDeltaZ, speed, lastSpeed;
     private boolean clientGround, lastClientGround;
 
-    private int groundTicks, airTicks, climbTicks, lastGroundTicks, lastAirTicks, lastClimbTicks;
+    private int groundTicks, airTicks, climbTicks, lastGroundTicks, lastAirTicks, lastClimbTicks, outVehicleTicks;
 
     private Location lastLocation;
 
@@ -47,7 +47,6 @@ public class PositionProcessor {
 
     public void handleFlying(Packet packet) {
         this.lastClientGround = clientGround;
-
         this.clientGround = packet.getRaw().getBooleans().read(0);
     }
 
@@ -56,22 +55,17 @@ public class PositionProcessor {
         this.lastAirTicks = airTicks;
 
         if(clientGround) {
-            this.groundTicks++;
+            this.groundTicks = Math.min(100, groundTicks + 1);
             this.airTicks = 0;
         } else {
-            this.airTicks++;
+            this.airTicks = Math.min(100, airTicks + 1);
             this.groundTicks = 0;
         }
 
         this.lastClimbTicks = climbTicks;
 
-        if(data.CLIMBABLE) {
-            this.climbTicks++;
-        } else {
-            if(climbTicks > 0) {
-                this.climbTicks = 0;
-            }
-        }
+        this.climbTicks = data.CLIMBABLE ? Math.min(10, climbTicks + 1) : 0;
+        this.outVehicleTicks = data.getPlayer().isInsideVehicle() ? 0 : Math.min(10, outVehicleTicks + 1);
     }
 
 }

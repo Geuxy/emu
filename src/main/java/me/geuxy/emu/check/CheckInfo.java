@@ -1,4 +1,4 @@
-package me.geuxy.emu.api.check;
+package me.geuxy.emu.check;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

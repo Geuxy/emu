@@ -1,20 +1,20 @@
-package me.geuxy.emu.check.impl.move.speed;
+package me.geuxy.emu.check.impl.move.noslow;
 
 import me.geuxy.emu.check.AbstractCheck;
-import me.geuxy.emu.api.check.CheckInfo;
+import me.geuxy.emu.check.CheckInfo;
 import me.geuxy.emu.data.PlayerData;
 import me.geuxy.emu.packet.Packet;
 
 @CheckInfo(
-    name = "Speed",
+    name = "NoSlow",
     description = "Invalid horizontal movement in web",
-    type = "E"
+    type = "A"
 )
-public class SpeedE extends AbstractCheck {
+public class NoSlowA extends AbstractCheck {
 
     private int ticks;
 
-    public SpeedE(PlayerData data) {
+    public NoSlowA(PlayerData data) {
         super(data);
     }
 

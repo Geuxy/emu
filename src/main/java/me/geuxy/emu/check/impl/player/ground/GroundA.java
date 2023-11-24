@@ -1,13 +1,14 @@
 package me.geuxy.emu.check.impl.player.ground;
 
 import me.geuxy.emu.check.AbstractCheck;
-import me.geuxy.emu.api.check.CheckInfo;
+import me.geuxy.emu.check.CheckInfo;
 import me.geuxy.emu.data.PlayerData;
 import me.geuxy.emu.packet.Packet;
 import me.geuxy.emu.utils.BlockUtils;
 
 import me.geuxy.emu.utils.PlayerUtil;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 
 @CheckInfo(
     name = "Ground",
@@ -50,7 +51,9 @@ public class GroundA extends AbstractCheck {
                 Location playerLoc = data.getPlayer().getLocation();
                 Location loc = new Location(data.getPlayer().getWorld(), playerLoc.getX() + x, playerLoc.getY() - 1D, playerLoc.getZ() + z);
 
-                if (BlockUtils.getBlock(loc).getType().isSolid()) {
+                Block block = BlockUtils.getBlock(loc);
+
+                if (block != null && block.getType().isSolid()) {
                     return true;
                 }
             }

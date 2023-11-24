@@ -1,18 +1,18 @@
-package me.geuxy.emu.check.impl.move.fly;
+package me.geuxy.emu.check.impl.move.climb;
 
 import me.geuxy.emu.check.AbstractCheck;
-import me.geuxy.emu.api.check.CheckInfo;
+import me.geuxy.emu.check.CheckInfo;
 import me.geuxy.emu.data.PlayerData;
 import me.geuxy.emu.packet.Packet;
 
 @CheckInfo(
-    name = "Fly",
+    name = "Climb",
     description = "Invalid climb height",
-    type = "C"
+    type = "B"
 )
-public class FlyC extends AbstractCheck {
+public class ClimbB extends AbstractCheck {
 
-    public FlyC(PlayerData data) {
+    public ClimbB(PlayerData data) {
         super(data);
     }
 

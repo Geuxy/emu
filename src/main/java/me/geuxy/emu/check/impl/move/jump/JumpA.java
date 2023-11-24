@@ -1,7 +1,7 @@
-package me.geuxy.emu.check.impl.move.fly;
+package me.geuxy.emu.check.impl.move.jump;
 
 import me.geuxy.emu.check.AbstractCheck;
-import me.geuxy.emu.api.check.CheckInfo;
+import me.geuxy.emu.check.CheckInfo;
 import me.geuxy.emu.data.PlayerData;
 import me.geuxy.emu.packet.Packet;
 
@@ -9,13 +9,13 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 @CheckInfo(
-    name = "Fly",
+    name = "Jump",
     description = "Invalid jump height",
-    type = "D"
+    type = "A"
 )
-public class FlyD extends AbstractCheck {
+public class JumpA extends AbstractCheck {
 
-    public FlyD(PlayerData data) {
+    public JumpA(PlayerData data) {
         super(data);
     }
 

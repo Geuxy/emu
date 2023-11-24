@@ -1,12 +1,10 @@
 package me.geuxy.emu.check.impl.move.strafe;
 
-import me.geuxy.emu.api.check.CheckInfo;
+import me.geuxy.emu.check.CheckInfo;
 import me.geuxy.emu.check.AbstractCheck;
 import me.geuxy.emu.data.PlayerData;
 import me.geuxy.emu.packet.Packet;
 import me.geuxy.emu.utils.MathUtil;
-import org.bukkit.Location;
-import org.bukkit.util.Vector;
 
 @CheckInfo(
     name = "Strafe",

@@ -2,9 +2,8 @@ package me.geuxy.emu.data;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-
 import lombok.Setter;
-import me.geuxy.emu.api.data.IData;
+
 import me.geuxy.emu.Emu;
 import me.geuxy.emu.check.AbstractCheck;
 import me.geuxy.emu.data.processors.ActionProcessor;
@@ -12,9 +11,9 @@ import me.geuxy.emu.data.processors.PositionProcessor;
 import me.geuxy.emu.data.processors.RotationProcessor;
 import me.geuxy.emu.data.processors.VelocityProcessor;
 import me.geuxy.emu.packet.Packet;
-
 import me.geuxy.emu.utils.BlockUtils;
 import me.geuxy.emu.utils.BoundingBox;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -27,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter @RequiredArgsConstructor
-public class PlayerData implements IData {
+public class PlayerData {
 
     private final Player player;
 
@@ -86,10 +85,7 @@ public class PlayerData implements IData {
         for (double x = minX; x <= maxX; x += (maxX - minX)) {
             for (double y = minY; y <= maxY + 0.01; y += (maxY - minY) / 5) {
                 for (double z = minZ; z <= maxZ; z += (maxZ - minZ)) {
-                    Location location = new Location(player.getWorld(), x, y, z);
-                    Block block = BlockUtils.getBlock(location);
-
-                    blocks.add(block);
+                    blocks.add(BlockUtils.getBlock(new Location(player.getWorld(), x, y, z)));
                 }
             }
         }
@@ -100,7 +96,7 @@ public class PlayerData implements IData {
         Location bodyLoc = player.getLocation().add(0D, 1D, 0D);
 
         this.TELEPORTED = actionProcessor.getTeleportTicks() < 3;
-        this.RIDING = player.isInsideVehicle();
+        this.RIDING = positionProcessor.getOutVehicleTicks() < 3;
         this.LIVING = actionProcessor.getLivingTicks() < 3;
         this.ALLOWED_FLYING = player.getAllowFlight();
         this.BLOCK_ABOVE = BlockUtils.getBlock(player.getLocation().add(0D, 2D, 0D)) != null;
@@ -164,16 +160,6 @@ public class PlayerData implements IData {
 
     public PotionEffect getEffect(PotionEffectType type) {
         return player.getActivePotionEffects().stream().filter(e -> e.getType().equals(type)).findFirst().orElse(null);
-    }
-
-    @Override
-    public boolean isAlertsEnabled() {
-        return alertsEnabled;
-    }
-
-    @Override
-    public List<AbstractCheck> getChecks() {
-        return checks;
     }
 
 }

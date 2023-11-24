@@ -3,7 +3,6 @@ package me.geuxy.emu.check;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-import me.geuxy.emu.api.check.CheckInfo;
 import me.geuxy.emu.config.ConfigValues;
 import me.geuxy.emu.data.PlayerData;
 import me.geuxy.emu.packet.Packet;
@@ -36,10 +35,10 @@ public abstract class AbstractCheck {
             str += value;
         }
 
-            TextComponent comp = new TextComponent();
-            comp.setText(StringUtils.replace(this, data.getPlayer(), ConfigValues.MESSAGE_FAIL.stringValue()));
-            comp.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(str).create()));
-            Bukkit.spigot().broadcast(comp);
+        TextComponent comp = new TextComponent();
+        comp.setText(StringUtils.replace(this, data.getPlayer(), ConfigValues.MESSAGE_FAIL.stringValue()));
+        comp.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(str).create()));
+        Bukkit.spigot().broadcast(comp);
     }
 
     public double increaseBuffer() {

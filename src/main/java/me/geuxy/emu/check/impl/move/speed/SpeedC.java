@@ -1,18 +1,16 @@
 package me.geuxy.emu.check.impl.move.speed;
 
 import me.geuxy.emu.check.AbstractCheck;
-import me.geuxy.emu.api.check.CheckInfo;
+import me.geuxy.emu.check.CheckInfo;
 import me.geuxy.emu.data.PlayerData;
 import me.geuxy.emu.packet.Packet;
 
 @CheckInfo(
     name = "Speed",
-    description = "Invalid horizontal movement in liquid",
+    description = "Invalid horizontal movement in air",
     type = "C"
 )
 public class SpeedC extends AbstractCheck {
-
-    private double ticks;
 
     public SpeedC(PlayerData data) {
         super(data);
@@ -22,42 +20,26 @@ public class SpeedC extends AbstractCheck {
     public void processPacket(Packet packet) {
         if(packet.isMove()) {
             boolean exempt =
+                data.VELOCITY ||
+                data.EXPLOSION ||
                 data.TELEPORTED ||
                 data.LIVING ||
-                data.CLIMBABLE ||
-                data.getPositionProcessor().isClientGround() ||
-                data.ALLOWED_FLYING;
-
-            if(data.LIQUID) {
-                if(ticks < 10) {
-                    this.ticks++;
-                }
-            } else {
-
-                // Patches my own matrix jesus bypass
-                if(ticks > 10) {
-                    this.ticks = 0;
-                } else {
-                    this.ticks -= 0.25;
-                }
-            }
+                data.ALLOWED_FLYING ||
+                data.RIDING;
 
             double lastSpeed = data.getPositionProcessor().getLastSpeed();
             double speed = data.getPositionProcessor().getSpeed();
 
-            double predicted = (lastSpeed * 0.909997) + 2.54711021E-2;
-            double maxSpeed = 0.15;
+            if(data.getPositionProcessor().isLastClientGround() && !data.getPositionProcessor().isClientGround()) {
+                double prediction = lastSpeed * 1.991;
+                double difference = speed - prediction;
 
-            maxSpeed *= data.getSpeedMultiplier();
+                boolean invalid = difference > 6E-4 && speed > 0.61;
 
-            boolean invalid = data.LIQUID && speed > (ticks > 25 ? maxSpeed : Math.max(predicted, maxSpeed));
-
-            if(invalid && !exempt) {
-                if(increaseBuffer() > 2) {
-                    this.fail("tick=" + ticks, "max=" + (ticks > 25 ? maxSpeed : Math.max(predicted, maxSpeed)), "delta=" + speed);
+                if(invalid && !exempt) {
+                    this.fail("diff=" + difference, "expected=" + prediction, "delta=" + speed);
                 }
             }
-            this.reduceBuffer(0.05);
         }
     }
 

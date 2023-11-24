@@ -24,19 +24,26 @@ checks:
     a: # Attacked while dead
       enabled: true
       punishable: true
-      max-level: 20
+      max-level: 1
 
   velocity:
     a: # Vertical velocity
       enabled: true
       punishable: true
       max-level: 20
-    b: # Horizontal velocity
+
+  # Move
+
+  climb:
+    a: # Speed on ladder
+      enabled: true
+      punishable: true
+      max-level: 20
+    b: # Height on ladder
       enabled: true
       punishable: true
       max-level: 20
 
-  # Move
   fly:
     a: # Prediction in air
       enabled: true
@@ -46,11 +53,21 @@ checks:
       enabled: true
       punishable: true
       max-level: 20
-    c: # Max climb height
+
+  jesus:
+    a: # Speed in liquid
       enabled: true
       punishable: true
       max-level: 20
-    d: # Max jump height
+
+  jump:
+    a: # Max jump height
+      enabled: true
+      punishable: true
+      max-level: 20
+
+  noslow:
+    a: # Speed in web
       enabled: true
       punishable: true
       max-level: 20
@@ -64,23 +81,11 @@ checks:
       enabled: true
       punishable: true
       max-level: 20
-    c: # Max speed in liquid
+    c: # Max speed one tick after jumping
       enabled: true
       punishable: true
       max-level: 20
-    d: # Max speed on climbable
-      enabled: true
-      punishable: true
-      max-level: 20
-    e: # Max speed in webs
-      enabled: true
-      punishable: true
-      max-level: 20
-    f: # Speed cap
-      enabled: true
-      punishable: true
-      max-level: 20
-    g: # Max speed first tick in air
+    d: # Max speed
       enabled: true
       punishable: true
       max-level: 20
@@ -95,7 +100,14 @@ checks:
       punishable: true
       max-level: 20
 
+  strafe:
+    a: # Basic strafe
+      enabled: true
+      punishable: true
+      max-level: 20
+
   # Packet
+
   badpackets:
     a: # Impossible pitch
       enabled: true
@@ -111,12 +123,8 @@ checks:
       enabled: true
       punishable: true
       max-level: 20
-# Player
-  post:
-    a: # Hitting
-      enabled: true
-      punishable: true
-      max-level: 20
+
+  # Player
 
   ground:
     a: # Ground spoof

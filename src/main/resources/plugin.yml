@@ -1,0 +1,7 @@
+name: EmuAC
+version: b1
+description: Finally an anti-cheat made by an aussie
+main: me.geuxy.emu.EmuPlugin
+
+depend:
+  - ProtocolLib

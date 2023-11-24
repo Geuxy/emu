@@ -1,0 +1,125 @@
+
+
+message:
+
+  # Cool prefix
+  prefix: "&6Emu &7>>"
+
+  # Message sent when a player fails a check
+  # Prefixes:
+  # {prefix} - prefix from above value
+  # {player} - player's name that failed
+  # {check} - check name the player failed
+  # {level} - new check level
+  # {max} - maximum check level
+  # {info} - reason why the player failed
+  # {type} - the check type
+  fail: "{prefix} &6{player} &7failed &6{check} ({type}) &7{level}/{max} &8{info}"
+
+checks:
+
+  # Combat
+
+  killaura:
+    a: # Attacked while dead
+      enabled: true
+      punishable: true
+      max-level: 20
+
+  velocity:
+    a: # Vertical velocity
+      enabled: true
+      punishable: true
+      max-level: 20
+    b: # Horizontal velocity
+      enabled: true
+      punishable: true
+      max-level: 20
+
+  # Move
+  fly:
+    a: # Prediction in air
+      enabled: true
+      punishable: true
+      max-level: 20
+    b: # Sudden motion reduction
+      enabled: true
+      punishable: true
+      max-level: 20
+    c: # Max climb height
+      enabled: true
+      punishable: true
+      max-level: 20
+    d: # Max jump height
+      enabled: true
+      punishable: true
+      max-level: 20
+
+  speed:
+    a: # Prediction in air
+      enabled: true
+      punishable: true
+      max-level: 20
+    b: # Max speed on ground
+      enabled: true
+      punishable: true
+      max-level: 20
+    c: # Max speed in liquid
+      enabled: true
+      punishable: true
+      max-level: 20
+    d: # Max speed on climbable
+      enabled: true
+      punishable: true
+      max-level: 20
+    e: # Max speed in webs
+      enabled: true
+      punishable: true
+      max-level: 20
+    f: # Speed cap
+      enabled: true
+      punishable: true
+      max-level: 20
+    g: # Max speed first tick in air
+      enabled: true
+      punishable: true
+      max-level: 20
+
+  step:
+    a: # Full block step
+      enabled: true
+      punishable: true
+      max-level: 20
+    b: # Reverse / Fast fall
+      enabled: true
+      punishable: true
+      max-level: 20
+
+  # Packet
+  badpackets:
+    a: # Impossible pitch
+      enabled: true
+      punishable: true
+      max-level: 20
+
+  timer:
+    a: # Balance
+      enabled: true
+      punishable: true
+      max-level: 20
+    b: # Average
+      enabled: true
+      punishable: true
+      max-level: 20
+# Player
+  post:
+    a: # Hitting
+      enabled: true
+      punishable: true
+      max-level: 20
+
+  ground:
+    a: # Ground spoof
+      enabled: true
+      punishable: true
+      max-level: 20

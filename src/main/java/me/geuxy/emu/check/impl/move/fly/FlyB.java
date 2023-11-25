@@ -33,13 +33,14 @@ public class FlyB extends AbstractCheck {
                 data.LIVING ||
                 data.BLOCK_ABOVE ||
                 data.STEPPING ||
+                data.CLIMBABLE ||
                 PlayerUtil.isNearBoat(data.getPlayer());
 
             if(data.STEPPING && deltaY <= 0.5) {
                 this.resetBuffer();
             }
 
-            boolean invalid = lastDeltaY > 0.1D && deltaY <= 0.07D;
+            boolean invalid = lastDeltaY > 0.1D && deltaY <= 0.04D;
 
             if(invalid && !exempt) {
                 if(thriveBuffer() > 1) {

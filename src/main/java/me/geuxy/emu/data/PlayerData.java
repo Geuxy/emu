@@ -91,15 +91,14 @@ public class PlayerData {
 
     public void handleFlying() {
         Location bottomLoc = player.getLocation().subtract(0D, 1D, 0D);
-        Location bodyLoc = player.getLocation().add(0D, 1D, 0D);
 
         this.TELEPORTED = actionProcessor.getTeleportTicks() < 2;
         this.RIDING = positionProcessor.getOutVehicleTicks() < 2;
         this.LIVING = actionProcessor.getLivingTicks() < 2;
         this.ALLOWED_FLYING = player.getAllowFlight();
         this.BLOCK_ABOVE = isSolidAbove();
-        this.CLIMBABLE = BlockUtils.isClimbable(player.getLocation()) || BlockUtils.isClimbable(bodyLoc);
-        this.LIQUID = BlockUtils.isLiquid(player.getLocation()) || BlockUtils.isLiquid(bodyLoc);
+        this.CLIMBABLE = !blocks.isEmpty() && blocks.stream().anyMatch(BlockUtils::isClimbable);
+        this.LIQUID = !blocks.isEmpty() && blocks.stream().anyMatch(BlockUtils::isLiquid);
         this.ICE = BlockUtils.isIce(bottomLoc);
         this.SOULSAND = BlockUtils.isSoulSand(bottomLoc);
         this.SLIME = BlockUtils.isSlime(bottomLoc);
@@ -110,7 +109,7 @@ public class PlayerData {
             NumberConversions.floor(positionProcessor.getX()) >> 4,
             NumberConversions.floor(positionProcessor.getZ()) >> 4
         );
-        this.STEPPING = BlockUtils.isHalf(bottomLoc) || BlockUtils.isHalf(positionProcessor.getLastLocation().subtract(0D, 1D, 0D));
+        this.STEPPING = BlockUtils.isHalf(bottomLoc) || BlockUtils.isHalf(positionProcessor.getFrom().subtract(0D, 1D, 0D));
 
         positionProcessor.onTick();
         velocityProcessor.handleFlying();
@@ -146,10 +145,10 @@ public class PlayerData {
         PotionEffect effect = this.getEffect(PotionEffectType.SPEED);
 
         if(effect != null) {
-            return effect.getAmplifier() + 1 * 0.2;
+            return ((effect.getAmplifier() + 1) * 0.062f) + ((player.getWalkSpeed() - 0.2f) * 1.6f);
         }
 
-        return 1;
+        return 0;
     }
 
     public double getSlowDivider() {

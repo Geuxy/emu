@@ -9,6 +9,7 @@ public class MathUtil {
         return Math.sqrt((a * a) + (b * b));
     }
 
+    // By PhoenixHaven
     public static double getAngleRotation(Location loc1, Location loc2) {
         if (loc1 == null || loc2 == null) return -1;
 
@@ -21,6 +22,7 @@ public class MathUtil {
         return ((playerRotation.getX() - expectedRotation.getX()) % 180);
     }
 
+    // By PhoenixHaven
     public static float[] getRotations(Location one, Location two) {
         double diffX = two.getX() - one.getX();
         double diffZ = two.getZ() - one.getZ();

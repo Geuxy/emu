@@ -22,7 +22,7 @@ public class ReachA extends AbstractCheck {
 
     @Override
     public void processPacket(Packet packet) {
-        if(packet.isFlying() && data.getCombatProcessor().getHitTicks() < 1) {
+        if(packet.isFlying() && data.getCombatProcessor().getHitTicks() < 2) {
             Entity entity = data.getCombatProcessor().getHitEntity();
 
             if(!(entity instanceof Player)) {
@@ -35,14 +35,14 @@ public class ReachA extends AbstractCheck {
                 return;
             }
 
-            double distance = data.getPlayer().getLocation().distance(playerData.getPlayer().getLocation());
+            double distance = data.getPlayer().getLocation().distance(playerData.getPlayer().getLocation()) - 3.479847;
 
             boolean exempt =
                 data.TELEPORTED ||
                 data.LIVING ||
                 data.CHUNK;
 
-            boolean invalid = distance > 3.08;
+            boolean invalid = distance > 3.01;
 
             if(invalid && !exempt) {
                 this.fail("dist=" + distance);

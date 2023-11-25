@@ -5,6 +5,8 @@ import me.geuxy.emu.check.CheckInfo;
 import me.geuxy.emu.data.PlayerData;
 import me.geuxy.emu.packet.Packet;
 import me.geuxy.emu.utils.world.BlockUtils;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 @CheckInfo(
     name = "Speed",
@@ -81,8 +83,19 @@ public class SpeedB extends AbstractCheck {
                         maxSpeed += 0.218;
                     }
                 }
-                maxSpeed *= data.getSpeedMultiplier();
-                maxSpeed /= data.getSlowDivider();
+
+                maxSpeed += data.getSpeedMultiplier();
+                //maxSpeed /= data.getSlowDivider();
+
+                PotionEffect effect = data.getEffect(PotionEffectType.SPEED);
+
+                int amplifier = 0;
+
+                if(effect != null) {
+                    amplifier = effect.getAmplifier() + 1;
+                }
+
+                maxSpeed -= 0.006 * (1 + amplifier);
                 break;
             }
 

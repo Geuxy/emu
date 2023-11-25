@@ -38,7 +38,7 @@ public class JesusA extends AbstractCheck {
                 if(ticks > 10) {
                     this.ticks = 0;
                 } else {
-                    this.ticks -= 0.25;
+                    this.ticks = Math.max(0, ticks - 0.25);
                 }
             }
 
@@ -46,7 +46,7 @@ public class JesusA extends AbstractCheck {
             double speed = data.getPositionProcessor().getSpeed();
 
             double predicted = (lastSpeed * 0.909997) + 2.54711021E-2;
-            double maxSpeed = 0.15;
+            double maxSpeed = 0.215;
 
             maxSpeed *= data.getSpeedMultiplier();
 

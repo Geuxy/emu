@@ -4,13 +4,8 @@ import io.github.retrooper.packetevents.packetwrappers.play.in.flying.WrappedPac
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import me.geuxy.emu.data.PlayerData;
-import me.geuxy.emu.packet.Packet;
-import me.geuxy.emu.utils.entity.BoundingBox;
 import me.geuxy.emu.utils.math.MathUtil;
-import me.geuxy.emu.utils.world.BlockUtils;
 import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.util.NumberConversions;
 
 @Getter @RequiredArgsConstructor
 public class PositionProcessor {
@@ -24,7 +19,7 @@ public class PositionProcessor {
 
     private int groundTicks, airTicks, climbTicks, lastGroundTicks, lastAirTicks, lastClimbTicks, outVehicleTicks;
 
-    private Location lastLocation;
+    private Location from, to;
 
     public void handle(WrappedPacketInFlying packet) {
         boolean position = packet.isPosition();
@@ -63,7 +58,8 @@ public class PositionProcessor {
         this.lastClientGround = clientGround;
         this.clientGround = packet.isOnGround();
 
-        this.lastLocation = new Location(data.getPlayer().getWorld(), lastX, lastY, lastZ, lastYaw, lastPitch);
+        this.from = new Location(data.getPlayer().getWorld(), lastX, lastY, lastZ, lastYaw, lastPitch);
+        this.to = new Location(data.getPlayer().getWorld(), x, y, z, yaw, pitch);
     }
 
     public void onTick() {

@@ -130,11 +130,12 @@ checks:
       min-buffer: 0
 
   strafe:
-    a: # Basic strafe
+    a: # Prediction strafe
       enabled: true
       punishable: true
       max-level: 20
       min-buffer: 0
+
 
   # Packet
 

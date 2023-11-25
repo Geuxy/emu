@@ -1,5 +1,8 @@
 package me.geuxy.emu.utils.entity;
 
+import me.geuxy.emu.utils.world.BlockUtils;
+import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 
 import java.util.List;
@@ -30,6 +33,22 @@ public class PlayerUtil {
             }
         }
 
+        return false;
+    }
+
+    public static boolean getSurroundingBlocks(Player player, double y) {
+        for(double x = -0.4; x < 0.8; x += 0.4) {
+            for (double z = -0.4; z < 0.8; z += 0.4) {
+                Location playerLoc = player.getLocation();
+                Location loc = new Location(player.getWorld(), playerLoc.getX() + x, playerLoc.getY() + y, playerLoc.getZ() + z);
+
+                Block block = BlockUtils.getBlock(loc);
+
+                if (block != null && block.getType().isSolid()) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 

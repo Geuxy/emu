@@ -33,7 +33,7 @@ public class GroundA extends AbstractCheck {
                 PlayerUtil.isNearBoat(data.getPlayer());
 
             if(isNearSolid()) {
-                location = data.getPositionProcessor().getLastLocation();
+                location = data.getPositionProcessor().getFrom();
                 decayBuffer(0.05);
             } else {
                 if(data.getPositionProcessor().isClientGround() && !exempt) {

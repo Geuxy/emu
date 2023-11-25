@@ -29,10 +29,15 @@ public class ClimbA extends AbstractCheck {
             double lastSpeed = data.getPositionProcessor().getLastSpeed();
             double speed = data.getPositionProcessor().getSpeed();
 
-            boolean invalid = (ticks > 2 && (speed > 0.150000006 || speed < -0.3));
+            double deltaY = data.getPositionProcessor().getDeltaY();
+            double lastDeltaY = data.getPositionProcessor().getLastDeltaY();
+
+            boolean climbing = Math.abs(deltaY - lastDeltaY) < 1E-4 && !data.getPositionProcessor().isClientGround() && data.CLIMBABLE;
+
+            boolean invalid = ticks > 2 && speed > 0.16;
             boolean invalid2 = ticks < 3 && speed >= lastSpeed;
 
-            if(data.CLIMBABLE && (invalid || invalid2) && !exempt) {
+            if(climbing && (invalid || invalid2) && !exempt) {
                 if(thriveBuffer() > 2) {
                     this.fail("tick=" + ticks, "delta=" + speed, "min=-0.3","max=0.150000006");
                 }

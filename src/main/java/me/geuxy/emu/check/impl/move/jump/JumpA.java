@@ -47,6 +47,7 @@ public class JumpA extends AbstractCheck {
                     data.VELOCITY ||
                     data.SLIME ||
                     data.BLOCK_ABOVE ||
+                    data.CLIMBABLE ||
                     PlayerUtil.isNearBoat(data.getPlayer()) ||
                     difference == 0.015555072702198913D ||
                     (difference == 0.08000001311302185D && deltaY == 0.5D) ||

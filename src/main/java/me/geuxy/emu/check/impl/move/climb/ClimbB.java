@@ -28,11 +28,14 @@ public class ClimbB extends AbstractCheck {
             int ticks = data.getPositionProcessor().getClimbTicks();
 
             double deltaY = data.getPositionProcessor().getDeltaY();
+            double lastDeltaY = data.getPositionProcessor().getLastDeltaY();
+
+            boolean climbing = Math.abs(deltaY - lastDeltaY) < 1E-4 && !data.getPositionProcessor().isClientGround() && data.CLIMBABLE;
 
             boolean invalid = ticks > 2 && (deltaY > 0.11761D || deltaY < -0.1501D);
             boolean invalid2 = ticks == 2 && deltaY >= 0.3;
 
-            if((invalid || invalid2) && !exempt) {
+            if(climbing && (invalid || invalid2) && !exempt) {
                 if(thriveBuffer() > 1) {
                     this.fail("delta=" + deltaY, "tick=" + ticks, "min=-0.1501", "max=0.11761");
                 }

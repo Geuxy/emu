@@ -14,7 +14,7 @@ message:
   # {max} - maximum check level
   # {info} - reason why the player failed
   # {type} - the check type
-  fail: "{prefix} &6{player} &7failed &6{check} ({type}) &7{level}/{max} &8{info}"
+  fail: "{prefix} &6{player} &7failed &6{check} ({type}) &7[&6{level}&7/{max}]"
 
 checks:
 
@@ -25,12 +25,22 @@ checks:
       enabled: true
       punishable: true
       max-level: 1
+      min-buffer: 0
+
 
   velocity:
     a: # Vertical velocity
       enabled: true
       punishable: true
       max-level: 20
+      min-buffer: 0
+
+  reach:
+    a: # Basic distance
+      enabled: true
+      punishable: true
+      max-level: 25
+      min-buffer: 0
 
   # Move
 
@@ -38,73 +48,93 @@ checks:
     a: # Speed on ladder
       enabled: true
       punishable: true
-      max-level: 20
+      max-level: 5
+      min-buffer: 0
+
     b: # Height on ladder
       enabled: true
       punishable: true
-      max-level: 20
+      max-level: 15
+      min-buffer: 0
 
   fly:
     a: # Prediction in air
       enabled: true
       punishable: true
       max-level: 20
+      min-buffer: 0
+
     b: # Sudden motion reduction
       enabled: true
       punishable: true
-      max-level: 20
+      max-level: 5
+      min-buffer: 0
 
   jesus:
     a: # Speed in liquid
       enabled: true
       punishable: true
-      max-level: 20
+      max-level: 10
+      min-buffer: 0
 
   jump:
     a: # Max jump height
       enabled: true
       punishable: true
       max-level: 20
+      min-buffer: 0
 
   noslow:
     a: # Speed in web
       enabled: true
       punishable: true
-      max-level: 20
+      max-level: 5
+      min-buffer: 0
 
   speed:
     a: # Prediction in air
       enabled: true
       punishable: true
       max-level: 20
+      min-buffer: 0
+
     b: # Max speed on ground
       enabled: true
       punishable: true
-      max-level: 20
+      max-level: 30
+      min-buffer: 0
+
     c: # Max speed one tick after jumping
       enabled: true
       punishable: true
-      max-level: 20
+      max-level: 3
+      min-buffer: 0
+
     d: # Max speed
       enabled: true
       punishable: true
-      max-level: 20
+      max-level: 3
+      min-buffer: 0
 
   step:
     a: # Full block step
       enabled: true
       punishable: true
-      max-level: 20
+      max-level: 5
+      min-buffer: 0
+
     b: # Reverse / Fast fall
       enabled: true
       punishable: true
-      max-level: 20
+      max-level: 3
+      min-buffer: 0
 
   strafe:
     a: # Basic strafe
       enabled: true
       punishable: true
       max-level: 20
+      min-buffer: 0
 
   # Packet
 
@@ -112,17 +142,21 @@ checks:
     a: # Impossible pitch
       enabled: true
       punishable: true
-      max-level: 20
+      max-level: 1
+      min-buffer: 0
 
   timer:
     a: # Balance
       enabled: true
       punishable: true
-      max-level: 20
+      max-level: 5
+      min-buffer: 0
+
     b: # Average
       enabled: true
       punishable: true
-      max-level: 20
+      max-level: 25
+      min-buffer: 0
 
   # Player
 
@@ -130,4 +164,5 @@ checks:
     a: # Ground spoof
       enabled: true
       punishable: true
-      max-level: 20
+      max-level: 5
+      min-buffer: 0

@@ -44,11 +44,11 @@ public class NoSlowA extends AbstractCheck {
             boolean invalid = ticks > 1 && speed > maxSpeed;
 
             if(invalid && !exempt) {
-                if(increaseBuffer() > 1) {
+                if(thriveBuffer() > 1) {
                     this.fail("tick=" + ticks, "max=" + maxSpeed, "delta=" + speed);
                 }
             }
-            this.reduceBuffer(0.05);
+            this.decayBuffer(0.05);
         }
     }
 

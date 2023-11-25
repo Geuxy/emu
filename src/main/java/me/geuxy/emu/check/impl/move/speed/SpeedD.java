@@ -29,11 +29,11 @@ public class SpeedD extends AbstractCheck {
             boolean invalid = speed > maxSpeed;
 
             if(invalid && !exempt) {
-                if(increaseBuffer() > 1) {
+                if(thriveBuffer() > 1) {
                     this.fail("max=" + maxSpeed, "delta=" + speed);
                 }
             }
-            this.reduceBuffer(0.02);
+            this.decayBuffer(0.02);
         }
     }
 

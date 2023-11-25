@@ -49,7 +49,6 @@ public class VelocityProcessor {
 
         WrappedPacketOutTransaction transaction = new WrappedPacketOutTransaction(0, velocityID, false);
         PacketEvents.get().getPlayerUtils().sendPacket(data.getPlayer(), transaction);
-        //ProtocolLibrary.getProtocolManager().sendServerPacket(data.getPlayer(), transaction);
         pending.put(velocityID, new Vector(x, y, z));
     }
 
@@ -72,13 +71,8 @@ public class VelocityProcessor {
     }
 
     public void handleFlying() {
-        if(velocityTicks < 10) {
-            this.velocityTicks++;
-        }
-
-        if(explosionTicks < 10) {
-            this.explosionTicks++;
-        }
+        this.velocityTicks = Math.min(10, velocityTicks + 1);
+        this.explosionTicks = Math.min(10, explosionTicks + 1);
     }
 
 }

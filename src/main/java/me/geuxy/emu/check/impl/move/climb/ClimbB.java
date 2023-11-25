@@ -22,6 +22,7 @@ public class ClimbB extends AbstractCheck {
             boolean exempt =
                 data.TELEPORTED ||
                 data.LIVING ||
+                data.ALLOWED_FLYING ||
                 data.getPositionProcessor().isClientGround();
 
             int ticks = data.getPositionProcessor().getClimbTicks();
@@ -32,11 +33,11 @@ public class ClimbB extends AbstractCheck {
             boolean invalid2 = ticks == 2 && deltaY >= 0.3;
 
             if((invalid || invalid2) && !exempt) {
-                if(increaseBuffer() > 1) {
-                    this.fail("delta=" + deltaY, "tick=" + ticks, "min=-0.1501D", "max=0.11761");
+                if(thriveBuffer() > 1) {
+                    this.fail("delta=" + deltaY, "tick=" + ticks, "min=-0.1501", "max=0.11761");
                 }
             }
-            this.reduceBuffer(0.02);
+            this.decayBuffer(0.02);
         }
     }
 

@@ -34,6 +34,11 @@ public enum ConfigValues {
             return Emu.INSTANCE.getPlugin().getConfig().getInt(prefix.toLowerCase());
         }
 
+        public static int getMinBuffer(AbstractCheck check) {
+            String prefix = "checks." + check.getName().replace(" ", "") + "." + check.getType() + "." + "min-buffer";
+            return Emu.INSTANCE.getPlugin().getConfig().getInt(prefix.toLowerCase());
+        }
+
         public static boolean isEnabled(AbstractCheck check) {
             String prefix = "checks." + check.getName().replace(" ", "") + "." + check.getType() + "." + "enabled";
             return Emu.INSTANCE.getPlugin().getConfig().getBoolean(prefix.toLowerCase());

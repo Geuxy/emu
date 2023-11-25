@@ -13,6 +13,8 @@ import me.geuxy.emu.utils.world.BlockUtils;
 )
 public class SpeedB extends AbstractCheck {
 
+    private int offIceTicks;
+
     public SpeedB(PlayerData data) {
         super(data);
     }
@@ -64,19 +66,21 @@ public class SpeedB extends AbstractCheck {
                 break;
             default:
                 if(BlockUtils.isIce(data.getPlayer().getLocation().subtract(0D, 1D, 0D))) {
-                    if(groundTicks < 15) {
-                        maxSpeed -= 0.007 * groundTicks;
-
-                        if(maxSpeed < 0.3) {
-                            maxSpeed = 0.39;
-                        }
+                    if(speed > 0.27021) {
+                        maxSpeed -= 0.001;
                     } else {
-                        maxSpeed = 0.39;
+                        maxSpeed = 0.27021;
                     }
+                    this.offIceTicks = 0;
                 } else {
-                    maxSpeed = 0.287;
-                }
+                    this.offIceTicks = Math.min(15, offIceTicks + 1);
 
+                    maxSpeed = 0.287;
+
+                    if(offIceTicks < 12) {
+                        maxSpeed += 0.218;
+                    }
+                }
                 maxSpeed *= data.getSpeedMultiplier();
                 maxSpeed /= data.getSlowDivider();
                 break;

@@ -7,6 +7,7 @@ import me.geuxy.emu.config.ConfigValues;
 import me.geuxy.emu.data.PlayerData;
 import me.geuxy.emu.packet.Packet;
 import me.geuxy.emu.utils.string.StringUtils;
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -25,28 +26,38 @@ public abstract class AbstractCheck {
     public abstract void processPacket(Packet packet);
 
     public void fail(String... values) {
-        level++;
+        this.level++;
 
-        String str = "";
+        String hoverText = "§7";
+
         for(String value : values) {
-            if(!str.isEmpty()) {
-                str += "\n";
+            if(!hoverText.isEmpty()) {
+                hoverText += "\n§7";
             }
-            str += value;
+            hoverText += value;
         }
 
         TextComponent comp = new TextComponent();
         comp.setText(StringUtils.replace(this, data.getPlayer(), ConfigValues.MESSAGE_FAIL.stringValue()));
-        comp.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(str).create()));
+        comp.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(hoverText).create()));
+        comp.setColor(ChatColor.DARK_GRAY);
         Bukkit.spigot().broadcast(comp);
+
+        if(level >= getMaxLevel()) {
+            this.level = 0;
+        }
     }
 
-    public double increaseBuffer() {
+    public double thriveBuffer() {
         return this.buffer = Math.min(100, this.buffer + 1);
     }
 
-    public double reduceBuffer(double buffer) {
-        return this.buffer = Math.max(0, this.buffer - buffer);
+    public double decayBuffer(double buffer) {
+        return this.buffer = Math.max(getMinBuffer(), this.buffer - buffer);
+    }
+
+    public double resetBuffer() {
+        return this.buffer = getMinBuffer();
     }
 
     public String getName() {
@@ -67,6 +78,10 @@ public abstract class AbstractCheck {
 
     public int getMaxLevel() {
         return ConfigValues.Checks.getMaxLevel(this);
+    }
+
+    public int getMinBuffer() {
+        return ConfigValues.Checks.getMinBuffer(this);
     }
 
 }

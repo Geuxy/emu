@@ -2,6 +2,7 @@ package me.geuxy.emu.data;
 
 import io.github.retrooper.packetevents.packetwrappers.play.in.flying.WrappedPacketInFlying;
 import io.github.retrooper.packetevents.packetwrappers.play.in.transaction.WrappedPacketInTransaction;
+import io.github.retrooper.packetevents.packetwrappers.play.in.useentity.WrappedPacketInUseEntity;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -9,6 +10,7 @@ import lombok.Setter;
 import me.geuxy.emu.Emu;
 import me.geuxy.emu.check.AbstractCheck;
 import me.geuxy.emu.data.processors.ActionProcessor;
+import me.geuxy.emu.data.processors.CombatProcessor;
 import me.geuxy.emu.data.processors.PositionProcessor;
 import me.geuxy.emu.data.processors.VelocityProcessor;
 import me.geuxy.emu.utils.world.BlockUtils;
@@ -33,6 +35,7 @@ public class PlayerData {
     private final PositionProcessor positionProcessor = new PositionProcessor(this);
     private final VelocityProcessor velocityProcessor = new VelocityProcessor(this);
     private final ActionProcessor actionProcessor = new ActionProcessor(this);
+    private final CombatProcessor combatProcessor = new CombatProcessor(this);
 
     // Exempts (fuck naming conventions)
     public boolean TELEPORTED;
@@ -49,6 +52,7 @@ public class PlayerData {
     public boolean VELOCITY;
     public boolean WEB;
     public boolean CHUNK;
+    public boolean STEPPING;
 
     private final List<AbstractCheck> checks = Emu.INSTANCE.getCheckManager().loadChecks(this);
 
@@ -89,9 +93,9 @@ public class PlayerData {
         Location bottomLoc = player.getLocation().subtract(0D, 1D, 0D);
         Location bodyLoc = player.getLocation().add(0D, 1D, 0D);
 
-        this.TELEPORTED = actionProcessor.getTeleportTicks() < 3;
-        this.RIDING = positionProcessor.getOutVehicleTicks() < 3;
-        this.LIVING = actionProcessor.getLivingTicks() < 3;
+        this.TELEPORTED = actionProcessor.getTeleportTicks() < 2;
+        this.RIDING = positionProcessor.getOutVehicleTicks() < 2;
+        this.LIVING = actionProcessor.getLivingTicks() < 2;
         this.ALLOWED_FLYING = player.getAllowFlight();
         this.BLOCK_ABOVE = isSolidAbove();
         this.CLIMBABLE = BlockUtils.isClimbable(player.getLocation()) || BlockUtils.isClimbable(bodyLoc);
@@ -100,16 +104,22 @@ public class PlayerData {
         this.SOULSAND = BlockUtils.isSoulSand(bottomLoc);
         this.SLIME = BlockUtils.isSlime(bottomLoc);
         this.WEB = !blocks.isEmpty() && blocks.stream().anyMatch(b -> b.getType().equals(Material.WEB));
-        this.VELOCITY = velocityProcessor.getVelocityTicks() < 3;
-        this.EXPLOSION = velocityProcessor.getExplosionTicks() < 3;
+        this.VELOCITY = velocityProcessor.getVelocityTicks() < 2;
+        this.EXPLOSION = velocityProcessor.getExplosionTicks() < 2;
         this.CHUNK = !player.getWorld().isChunkLoaded(
             NumberConversions.floor(positionProcessor.getX()) >> 4,
             NumberConversions.floor(positionProcessor.getZ()) >> 4
         );
+        this.STEPPING = BlockUtils.isHalf(bottomLoc) || BlockUtils.isHalf(positionProcessor.getLastLocation().subtract(0D, 1D, 0D));
 
         positionProcessor.onTick();
         velocityProcessor.handleFlying();
         actionProcessor.handleFlying();
+        combatProcessor.handleFlying();
+    }
+
+    public void handleUseEntity(WrappedPacketInUseEntity packet) {
+        combatProcessor.handleUseEntity(packet);
     }
 
     public void handleTeleport() {

@@ -4,6 +4,8 @@ import me.geuxy.emu.check.AbstractCheck;
 import me.geuxy.emu.check.CheckInfo;
 import me.geuxy.emu.data.PlayerData;
 import me.geuxy.emu.packet.Packet;
+import me.geuxy.emu.utils.entity.PlayerUtil;
+import me.geuxy.emu.utils.world.BlockUtils;
 
 @CheckInfo(
     name = "Fly",
@@ -19,26 +21,32 @@ public class FlyB extends AbstractCheck {
     @Override
     public void processPacket(Packet packet) {
         if(packet.isFlying()) {
+            int airTicks = data.getPositionProcessor().getAirTicks();
+
+            double lastDeltaY = data.getPositionProcessor().getLastDeltaY();
+            double deltaY = data.getPositionProcessor().getDeltaY();
+
             boolean exempt =
                 data.TELEPORTED ||
                 data.ALLOWED_FLYING ||
                 data.RIDING ||
                 data.LIVING ||
-                data.BLOCK_ABOVE;
+                data.BLOCK_ABOVE ||
+                data.STEPPING ||
+                PlayerUtil.isNearBoat(data.getPlayer());
 
-            double lastDeltaY = data.getPositionProcessor().getLastDeltaY();
-            double deltaY = data.getPositionProcessor().getDeltaY();
+            if(data.STEPPING && deltaY <= 0.5) {
+                this.resetBuffer();
+            }
 
-            int airTicks = data.getPositionProcessor().getAirTicks();
-
-            boolean invalid = lastDeltaY > 0.1D && deltaY <= 0.03D;
+            boolean invalid = lastDeltaY > 0.1D && deltaY <= 0.07D;
 
             if(invalid && !exempt) {
-                if(increaseBuffer() > 1) {
-                    this.fail("delta=" + deltaY, "last=" + lastDeltaY,  "diff=" + Math.abs(deltaY - lastDeltaY),"tick=" + airTicks);
+                if(thriveBuffer() > 1) {
+                    this.fail("delta=" + deltaY, "last=" + lastDeltaY,  "diff=" + Math.abs(deltaY - lastDeltaY), "tick=" + airTicks);
                 }
             }
-            this.reduceBuffer(0.02);
+            this.decayBuffer(0.02);
         }
     }
 

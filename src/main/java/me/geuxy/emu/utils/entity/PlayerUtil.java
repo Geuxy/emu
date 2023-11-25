@@ -6,6 +6,7 @@ import java.util.List;
 
 public class PlayerUtil {
 
+
     // PhoenixHaven
     public static boolean isNearRideableEntity(Player user) {
         List<Entity> entities = user.getPlayer().getNearbyEntities(5, 5, 5);
@@ -31,4 +32,5 @@ public class PlayerUtil {
 
         return false;
     }
+
 }

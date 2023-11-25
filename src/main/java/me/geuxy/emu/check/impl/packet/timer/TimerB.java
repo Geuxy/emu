@@ -37,11 +37,11 @@ public class TimerB extends AbstractCheck {
 
             ticks++;
 
-            if(diffTime > 47L) {
+            if(diffTime >= 49L - (int) Math.min(3, data.getActionProcessor().getPing() / 100)) {
                 fiftys++;
             }
 
-            if(ticks >= 20) {
+            if(ticks >= 10) {
                 boolean invalid = (ticks - fiftys) > fiftys;
 
                 if(invalid) {

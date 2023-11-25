@@ -29,7 +29,8 @@ public class TimerA extends AbstractCheck {
         if(packet.isFlying()) {
             boolean exempt =
                 data.TELEPORTED ||
-                data.LIVING;
+                data.LIVING ||
+                this.lastTime != 0;
 
             long currentTime = System.nanoTime();
             long lastTime = this.lastTime != 0 ? this.lastTime : currentTime - 50L;
@@ -44,12 +45,12 @@ public class TimerA extends AbstractCheck {
             boolean invalid = balance > TimeUnit.MILLISECONDS.toNanos(46L);
 
             if(invalid) {
-                if(increaseBuffer() > 2) {
+                if(thriveBuffer() > 2) {
                     this.fail("balance=" + balance, "rate=" + balanceRate);
                 }
                 this.balance = 0;
             } else {
-                reduceBuffer(0.01D);
+                decayBuffer(0.01D);
             }
             this.lastTime = currentTime;
         }

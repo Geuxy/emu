@@ -4,7 +4,24 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class BlockUtils {
+
+    private static List<Material> halfBlocks = Arrays.asList(
+            Material.ACACIA_STAIRS, Material.BIRCH_WOOD_STAIRS, Material.BRICK_STAIRS, Material.COBBLESTONE_STAIRS, Material.DARK_OAK_STAIRS, Material.JUNGLE_WOOD_STAIRS, Material.NETHER_BRICK_STAIRS, Material.QUARTZ_STAIRS, Material.RED_SANDSTONE_STAIRS, Material.SANDSTONE_STAIRS, Material.SMOOTH_STAIRS, Material.SPRUCE_WOOD_STAIRS, Material.WOOD_STAIRS,
+            Material.STONE_SLAB2, Material.DOUBLE_STONE_SLAB2, Material.STEP, Material.WOOD_STEP,
+            Material.SNOW, Material.TRAP_DOOR, Material.IRON_TRAPDOOR, Material.BED);
+
+    public static boolean isHalf(final Location location) {
+        Block block = getBlock(location);
+        return block != null && isHalf(block);
+    }
+
+    public static boolean isHalf(final Block block) {
+        return halfBlocks.contains(block.getType());
+    }
 
     public static boolean isClimbable(final Location location) {
         return isClimbable(getBlock(location));

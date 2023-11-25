@@ -1,5 +1,6 @@
 package me.geuxy.emu.data.processors;
 
+import io.github.retrooper.packetevents.PacketEvents;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -11,6 +12,8 @@ public class ActionProcessor {
     private final PlayerData data;
 
     private int teleportTicks, livingTicks;
+
+    private long ping;
 
     public void handleRespawn() {
         this.livingTicks = 0;
@@ -28,6 +31,8 @@ public class ActionProcessor {
         if(livingTicks < 10) {
             this.livingTicks++;
         }
+
+        this.ping = PacketEvents.get().getPlayerUtils().getPing(data.getPlayer());
     }
 
 }

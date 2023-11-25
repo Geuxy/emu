@@ -21,7 +21,8 @@ public class ClimbA extends AbstractCheck {
         if(packet.isFlying()) {
             boolean exempt =
                 data.TELEPORTED ||
-                data.LIVING;
+                data.LIVING ||
+                data.ALLOWED_FLYING;
 
             int ticks = data.getPositionProcessor().getClimbTicks();
 
@@ -32,11 +33,11 @@ public class ClimbA extends AbstractCheck {
             boolean invalid2 = ticks < 3 && speed >= lastSpeed;
 
             if(data.CLIMBABLE && (invalid || invalid2) && !exempt) {
-                if(increaseBuffer() > 2) {
+                if(thriveBuffer() > 2) {
                     this.fail("tick=" + ticks, "delta=" + speed, "min=-0.3","max=0.150000006");
                 }
             }
-            this.reduceBuffer(0.05);
+            this.decayBuffer(0.05);
         }
     }
 

@@ -4,4 +4,4 @@ description: Finally an anti-cheat made by an aussie
 main: me.geuxy.emu.plugin.EmuPlugin
 
 depend:
-  - ProtocolLib
+  - packetevents

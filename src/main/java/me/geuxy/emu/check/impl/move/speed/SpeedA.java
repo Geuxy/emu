@@ -38,14 +38,14 @@ public class SpeedA extends AbstractCheck {
 
                 int airTicks = data.getPositionProcessor().getAirTicks();
 
-                boolean invalid = difference > 1E-4;
+                boolean invalid = difference > 1E-4 && speed > 0.1;
 
                 if (invalid && !exempt) {
-                    if (increaseBuffer() > 1) {
+                    if (thriveBuffer() > 1) {
                         this.fail("diff=" + difference, "tick=" + airTicks, "expected=" + predicted, "delta=" + speed);
                     }
                 }
-                this.reduceBuffer(0.02);
+                this.decayBuffer(0.02);
             }
         }
     }

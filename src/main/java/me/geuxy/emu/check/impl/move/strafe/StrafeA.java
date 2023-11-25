@@ -25,11 +25,11 @@ public class StrafeA extends AbstractCheck {
                     data.getPositionProcessor().getLastLocation().clone()));
 
             if (angle % 45 == 0) {
-                if (increaseBuffer() >= 2) {
+                if (thriveBuffer() >= 2) {
                     fail("Strafe", String.valueOf(angle));
                 }
             } else {
-                reduceBuffer(0.025);
+                decayBuffer(0.025);
             }
         }
     }

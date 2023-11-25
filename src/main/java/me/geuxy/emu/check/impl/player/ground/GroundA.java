@@ -34,10 +34,10 @@ public class GroundA extends AbstractCheck {
 
             if(isNearSolid()) {
                 location = data.getPositionProcessor().getLastLocation();
-                reduceBuffer(0.05);
+                decayBuffer(0.05);
             } else {
                 if(data.getPositionProcessor().isClientGround() && !exempt) {
-                    if (increaseBuffer() > 1) {
+                    if (thriveBuffer() > 1) {
                         data.getPlayer().teleport(location);
                     }
                 }

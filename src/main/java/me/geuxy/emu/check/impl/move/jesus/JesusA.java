@@ -53,11 +53,11 @@ public class JesusA extends AbstractCheck {
             boolean invalid = data.LIQUID && speed > (ticks > 25 ? maxSpeed : Math.max(predicted, maxSpeed));
 
             if(invalid && !exempt) {
-                if(increaseBuffer() > 2) {
+                if(thriveBuffer() > 2) {
                     this.fail("tick=" + ticks, "max=" + (ticks > 25 ? maxSpeed : Math.max(predicted, maxSpeed)), "delta=" + speed);
                 }
             }
-            this.reduceBuffer(0.05);
+            this.decayBuffer(0.05);
         }
     }
 

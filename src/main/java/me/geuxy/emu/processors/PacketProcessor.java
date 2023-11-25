@@ -2,6 +2,7 @@ package me.geuxy.emu.processors;
 
 import io.github.retrooper.packetevents.packetwrappers.play.in.flying.WrappedPacketInFlying;
 import io.github.retrooper.packetevents.packetwrappers.play.in.transaction.WrappedPacketInTransaction;
+import io.github.retrooper.packetevents.packetwrappers.play.in.useentity.WrappedPacketInUseEntity;
 import io.github.retrooper.packetevents.packetwrappers.play.out.entityvelocity.WrappedPacketOutEntityVelocity;
 import me.geuxy.emu.data.PlayerData;
 import me.geuxy.emu.packet.Packet;
@@ -14,6 +15,9 @@ public class PacketProcessor {
 
         } else if(packet.isTransaction()) {
             data.handleTransaction(new WrappedPacketInTransaction(packet.getRaw()));
+
+        } else if(packet.isUseEntity()) {
+            data.handleUseEntity(new WrappedPacketInUseEntity(packet.getRaw()));
         }
 
         data.getChecks().forEach(c -> c.processPacket(packet));

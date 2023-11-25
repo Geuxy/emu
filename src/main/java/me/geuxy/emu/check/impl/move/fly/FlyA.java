@@ -48,11 +48,11 @@ public class FlyA extends AbstractCheck {
                 boolean invalid = difference > 1E-8D;
 
                 if (invalid && !exempt) {
-                    if (increaseBuffer() > 1) {
+                    if (thriveBuffer() > 1) {
                         this.fail("diff=" + difference, "tick=" + airTicks, "expected=" + predicted, "delta=" + deltaY);
                     }
                 }
-                this.reduceBuffer(0.01D);
+                this.decayBuffer(0.01D);
             }
         }
     }

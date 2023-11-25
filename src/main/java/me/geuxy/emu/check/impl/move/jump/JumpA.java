@@ -5,6 +5,7 @@ import me.geuxy.emu.check.CheckInfo;
 import me.geuxy.emu.data.PlayerData;
 import me.geuxy.emu.packet.Packet;
 
+import me.geuxy.emu.utils.entity.PlayerUtil;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -46,6 +47,7 @@ public class JumpA extends AbstractCheck {
                     data.VELOCITY ||
                     data.SLIME ||
                     data.BLOCK_ABOVE ||
+                    PlayerUtil.isNearBoat(data.getPlayer()) ||
                     difference == 0.015555072702198913D ||
                     (difference == 0.08000001311302185D && deltaY == 0.5D) ||
                     difference == 0.4983999884128574D ||
@@ -54,7 +56,7 @@ public class JumpA extends AbstractCheck {
                     // Falling when water below
                     difference == 0.49839998841285693D;
 
-                boolean invalid = difference > 1E-6;
+                boolean invalid = difference > 1E-4;
 
                 if(invalid && !exempt) {
                     this.fail("diff=" + difference, "delta=" + deltaY, "expected=" + maxJumpHeight);

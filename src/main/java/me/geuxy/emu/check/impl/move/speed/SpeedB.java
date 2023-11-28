@@ -3,6 +3,7 @@ package me.geuxy.emu.check.impl.move.speed;
 import me.geuxy.emu.check.AbstractCheck;
 import me.geuxy.emu.check.CheckInfo;
 import me.geuxy.emu.data.PlayerData;
+import me.geuxy.emu.exempt.ExemptType;
 import me.geuxy.emu.packet.Packet;
 import me.geuxy.emu.utils.world.BlockUtils;
 import org.bukkit.potion.PotionEffect;
@@ -29,12 +30,13 @@ public class SpeedB extends AbstractCheck {
             double lastSpeed = data.getPositionProcessor().getLastSpeed();
             double speed = data.getPositionProcessor().getSpeed();
 
-            boolean exempt =
-                data.VELOCITY ||
-                data.TELEPORTED ||
-                data.LIVING ||
-                data.ALLOWED_FLYING ||
-                data.RIDING;
+            boolean exempt = isExempt(
+                ExemptType.VELOCITY,
+                ExemptType.TELEPORTED,
+                ExemptType.SPAWNED,
+                ExemptType.ALLOWED_FLIGHT,
+                ExemptType.IN_VEHICLE
+            );
 
             double maxSpeed = lastSpeed;
 
@@ -105,8 +107,11 @@ public class SpeedB extends AbstractCheck {
             boolean invalid = difference > maxDifference && speed >= 0.2732;
 
             if(invalid && !exempt) {
-                this.fail("diff=" + difference, "tick=" + groundTicks, "max=" + maxSpeed, "delta=" + speed);
+                if (thriveBuffer() > 1) {
+                    this.fail("diff=" + difference, "tick=" + groundTicks, "max=" + maxSpeed, "delta=" + speed);
+                }
             }
+            this.decayBuffer(0.01);
         }
     }
 

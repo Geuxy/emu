@@ -4,8 +4,10 @@ import me.geuxy.emu.check.AbstractCheck;
 import me.geuxy.emu.check.CheckInfo;
 import me.geuxy.emu.data.PlayerData;
 import me.geuxy.emu.data.processors.PositionProcessor;
+import me.geuxy.emu.exempt.ExemptType;
 import me.geuxy.emu.packet.Packet;
 import me.geuxy.emu.utils.entity.PlayerUtil;
+import me.geuxy.emu.utils.world.BlockUtils;
 
 @CheckInfo(
     name = "Strafe",
@@ -30,26 +32,26 @@ public class StrafeA extends AbstractCheck {
             double lastDeltaX = processor.getLastDeltaX();
             double lastDeltaZ = processor.getLastDeltaZ();
 
-            double predDeltaX = lastDeltaX * 0.91; // https://bugs.mojang.com/browse/MC-12832
+            double predDeltaX = lastDeltaX * 0.91; // https://bugs.msudo pojang.com/browse/MC-12832
             double predDeltaZ = lastDeltaZ * 0.91;
 
-            boolean exempt =
-                data.ALLOWED_FLYING ||
-                data.LIVING ||
-                data.VELOCITY ||
-                data.EXPLOSION ||
-                data.BLOCK_ABOVE ||
-                data.RIDING ||
-                data.CLIMBABLE ||
-                data.LIQUID ||
-                airTicks < 3 ||
-                PlayerUtil.getSurroundingBlocks(data.getPlayer(), 0) ||
-                PlayerUtil.getSurroundingBlocks(data.getPlayer(), 1);
+            boolean exempt = isExempt(
+                ExemptType.ALLOWED_FLIGHT,
+                ExemptType.SPAWNED,
+                ExemptType.VELOCITY,
+                ExemptType.EXPLOSION,
+                ExemptType.UNDER_BLOCK,
+                ExemptType.IN_VEHICLE,
+                ExemptType.ON_CLIMBABLE,
+                ExemptType.IN_LIQUID
+            ) || airTicks < 3 ||
+                BlockUtils.getSurroundingBlocks(data.getPlayer(), 0D, 0.35D).stream().anyMatch(b -> b.getType().isSolid()) ||
+                BlockUtils.getSurroundingBlocks(data.getPlayer(), 1D, 0.35D).stream().anyMatch(b -> b.getType().isSolid());
 
             double differenceX = Math.abs(deltaX - predDeltaX);
             double differenceZ = Math.abs(deltaZ - predDeltaZ);
 
-            boolean invalid = differenceX > 0.031 || differenceZ > 0.03;
+            boolean invalid = (differenceX > 0.031 || differenceZ > 0.031) && data.getPositionProcessor().getSpeed() > 0.3;
 
             if(invalid && !exempt) {
                 if(thriveBuffer() > 2) {

@@ -3,6 +3,7 @@ package me.geuxy.emu.check.impl.combat.velocity;
 import me.geuxy.emu.check.CheckInfo;
 import me.geuxy.emu.check.AbstractCheck;
 import me.geuxy.emu.data.PlayerData;
+import me.geuxy.emu.exempt.ExemptType;
 import me.geuxy.emu.packet.Packet;
 
 @CheckInfo(
@@ -24,17 +25,21 @@ public class VelocityA extends AbstractCheck {
 
             double difference = Math.abs(deltaY - velocityY);
 
-            boolean invalid = difference > 0.1;
+            boolean exempt = isExempt(
+                ExemptType.TELEPORTED,
+                ExemptType.SPAWNED,
+                ExemptType.ON_CLIMBABLE,
+                ExemptType.IN_VEHICLE
+            );
 
-            boolean exempt =
-                data.TELEPORTED ||
-                data.LIVING ||
-                data.CLIMBABLE ||
-                data.RIDING;
+            boolean invalid = difference > 1E-6 && velocityY > 1E-2;
 
-            if (invalid && !exempt) {
-                this.fail("diff=" + difference, "delta=" + deltaY, "expected=" + velocityY);
+            if(invalid && !exempt) {
+                if(thriveBuffer() > 1) {
+                    this.fail("diff=" + difference, "delta=" + deltaY, "expected=" + velocityY);
+                }
             }
+            this.decayBuffer(0.25);
 
         }
     }

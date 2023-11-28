@@ -3,6 +3,7 @@ package me.geuxy.emu.check.impl.move.jump;
 import me.geuxy.emu.check.AbstractCheck;
 import me.geuxy.emu.check.CheckInfo;
 import me.geuxy.emu.data.PlayerData;
+import me.geuxy.emu.exempt.ExemptType;
 import me.geuxy.emu.packet.Packet;
 
 import me.geuxy.emu.utils.entity.PlayerUtil;
@@ -36,20 +37,20 @@ public class JumpA extends AbstractCheck {
 
                 double deltaY = data.getPositionProcessor().getDeltaY();
 
-                double difference = Math.abs(deltaY - maxJumpHeight);
+                double difference = Math.abs(deltaY - (isExempt(ExemptType.VELOCITY) ? data.getVelocityProcessor().getY() : maxJumpHeight));
 
-                boolean exempt =
-                    data.TELEPORTED ||
-                    data.LIVING ||
-                    data.EXPLOSION ||
-                    data.LIQUID ||
-                    data.WEB ||
-                    data.VELOCITY ||
-                    data.SLIME ||
-                    data.BLOCK_ABOVE ||
-                    data.CLIMBABLE ||
-                    PlayerUtil.isNearBoat(data.getPlayer()) ||
-                    difference == 0.015555072702198913D ||
+                boolean exempt = isExempt(
+                    ExemptType.TELEPORTED,
+                    ExemptType.SPAWNED,
+                    ExemptType.EXPLOSION,
+                    ExemptType.IN_LIQUID,
+                    ExemptType.IN_WEB,
+                    ExemptType.VELOCITY,
+                    ExemptType.ON_SLIME,
+                    ExemptType.UNDER_BLOCK,
+                    ExemptType.ON_CLIMBABLE,
+                    ExemptType.BOAT
+                ) || difference == 0.015555072702198913D ||
                     (difference == 0.08000001311302185D && deltaY == 0.5D) ||
                     difference == 0.4983999884128574D ||
                     difference == 0.4983999884128565D ||

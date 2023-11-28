@@ -24,9 +24,4 @@ public class PlayerListener implements Listener {
         Emu.INSTANCE.getDataManager().get(event.getPlayer()).handleTeleport();
     }
 
-    @EventHandler(priority = EventPriority.LOW)
-    public void onRespawn(PlayerRespawnEvent event) {
-        Emu.INSTANCE.getDataManager().get(event.getPlayer()).handleRespawn();
-    }
-
 }

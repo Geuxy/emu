@@ -16,4 +16,9 @@ public class EmuPlugin extends JavaPlugin {
         super.saveDefaultConfig();
     }*/
 
+    @Override
+    public void onDisable() {
+        Emu.INSTANCE.stop();
+    }
+
 }

@@ -4,6 +4,7 @@ import me.geuxy.emu.Emu;
 import me.geuxy.emu.check.AbstractCheck;
 import me.geuxy.emu.check.CheckInfo;
 import me.geuxy.emu.data.PlayerData;
+import me.geuxy.emu.exempt.ExemptType;
 import me.geuxy.emu.packet.Packet;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -35,14 +36,16 @@ public class ReachA extends AbstractCheck {
                 return;
             }
 
-            double distance = data.getPlayer().getLocation().distance(playerData.getPlayer().getLocation()) - 3.479847;
+            double distance = data.getPositionProcessor().getTo().distance(playerData.getPositionProcessor().getTo()) - 0.5D;
+            double lastDistance = data.getPositionProcessor().getFrom().distance(playerData.getPositionProcessor().getFrom()) - 0.5D;
 
-            boolean exempt =
-                data.TELEPORTED ||
-                data.LIVING ||
-                data.CHUNK;
+            boolean exempt = isExempt(
+                ExemptType.TELEPORTED,
+                ExemptType.SPAWNED,
+                ExemptType.CHUNK
+            );
 
-            boolean invalid = distance > 3.01;
+            boolean invalid = distance > 3.1 && distance < lastDistance;
 
             if(invalid && !exempt) {
                 this.fail("dist=" + distance);

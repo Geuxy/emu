@@ -1,10 +1,13 @@
 package me.geuxy.emu.check.manager;
 
 import me.geuxy.emu.check.impl.combat.killaura.KillAuraA;
+import me.geuxy.emu.check.impl.combat.killaura.KillAuraB;
 import me.geuxy.emu.check.impl.combat.reach.ReachA;
+import me.geuxy.emu.check.impl.combat.velocity.VelocityA;
 import me.geuxy.emu.check.impl.move.climb.*;
 import me.geuxy.emu.check.impl.move.fly.*;
 import me.geuxy.emu.check.impl.move.jesus.JesusA;
+import me.geuxy.emu.check.impl.move.jesus.JesusB;
 import me.geuxy.emu.check.impl.move.jump.JumpA;
 import me.geuxy.emu.check.impl.move.noslow.NoSlowA;
 import me.geuxy.emu.check.impl.move.speed.*;
@@ -31,9 +34,10 @@ public class CheckManager {
     public void onInit() {
         this.addChecks(
             KillAuraA.class,
+            KillAuraB.class,
             ReachA.class,
 
-            //VelocityA.class,
+            VelocityA.class,
 
             FlyA.class,
             FlyB.class,
@@ -49,6 +53,7 @@ public class CheckManager {
             StrafeA.class,
 
             JesusA.class,
+            JesusB.class,
 
             ClimbB.class,
             ClimbA.class,
@@ -59,9 +64,11 @@ public class CheckManager {
             StepB.class,
 
             BadPacketsA.class,
+            BadPacketsB.class,
 
             TimerA.class,
             TimerB.class,
+            TimerC.class,
 
             GroundA.class
         );

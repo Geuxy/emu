@@ -3,6 +3,7 @@ package me.geuxy.emu.check.impl.move.fly;
 import me.geuxy.emu.check.AbstractCheck;
 import me.geuxy.emu.check.CheckInfo;
 import me.geuxy.emu.data.PlayerData;
+import me.geuxy.emu.exempt.ExemptType;
 import me.geuxy.emu.packet.Packet;
 import me.geuxy.emu.utils.entity.PlayerUtil;
 
@@ -26,22 +27,29 @@ public class FlyA extends AbstractCheck {
 
                 double predicted = (lastDeltaY - 0.08D) * 0.9800000190734863D;
                 double falseFix = Math.abs(predicted) < 6E-3D ? 0D : predicted;
+
+                if(isExempt(ExemptType.VELOCITY)) {
+                    falseFix = data.getVelocityProcessor().getY();
+                }
+
                 double difference = Math.abs(deltaY - falseFix);
 
                 int airTicks = data.getPositionProcessor().getAirTicks();
 
-                boolean exempt =
-                    data.TELEPORTED ||
-                    data.RIDING ||
-                    data.CLIMBABLE ||
-                    data.ALLOWED_FLYING ||
-                    data.LIVING ||
-                    data.WEB ||
-                    data.LIQUID ||
-                    data.CHUNK ||
-                    data.BLOCK_ABOVE ||
-                    PlayerUtil.isNearBoat(data.getPlayer()) ||
-                    difference == 0.7840000152587834E-1D ||
+                boolean exempt = isExempt(
+                    ExemptType.TELEPORTED,
+                    ExemptType.IN_VEHICLE,
+                    ExemptType.ON_CLIMBABLE,
+                    ExemptType.ALLOWED_FLIGHT,
+                    ExemptType.SPAWNED,
+                    ExemptType.IN_WEB,
+                    ExemptType.IN_LIQUID,
+                    ExemptType.CHUNK,
+                    ExemptType.UNDER_BLOCK,
+                    ExemptType.BOAT,
+                    ExemptType.EXPLOSION,
+                    ExemptType.ON_SLIME
+                ) || difference == 0.7840000152587834E-1D ||
                     difference == 0.6349722830977471 ||
                     difference == 0.01524397154484497;
 

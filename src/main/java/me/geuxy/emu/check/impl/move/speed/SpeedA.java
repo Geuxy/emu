@@ -3,6 +3,7 @@ package me.geuxy.emu.check.impl.move.speed;
 import me.geuxy.emu.check.AbstractCheck;
 import me.geuxy.emu.check.CheckInfo;
 import me.geuxy.emu.data.PlayerData;
+import me.geuxy.emu.exempt.ExemptType;
 import me.geuxy.emu.packet.Packet;
 
 @CheckInfo(
@@ -20,15 +21,16 @@ public class SpeedA extends AbstractCheck {
     public void processPacket(Packet packet) {
         if(packet.isFlying()) {
             if(!data.getPositionProcessor().isLastClientGround() && !data.getPositionProcessor().isClientGround()) {
-                boolean exempt =
-                    data.LIVING ||
-                    data.ALLOWED_FLYING ||
-                    data.TELEPORTED ||
-                    data.LIQUID ||
-                    data.RIDING ||
-                    data.WEB ||
-                    data.VELOCITY ||
-                    data.EXPLOSION;
+                boolean exempt = isExempt(
+                    ExemptType.SPAWNED,
+                    ExemptType.ALLOWED_FLIGHT,
+                    ExemptType.TELEPORTED,
+                    ExemptType.IN_LIQUID,
+                    ExemptType.IN_VEHICLE,
+                    ExemptType.IN_WEB,
+                    ExemptType.VELOCITY,
+                    ExemptType.EXPLOSION
+                );
 
                 double speed = data.getPositionProcessor().getSpeed();
                 double lastSpeed = data.getPositionProcessor().getLastSpeed();

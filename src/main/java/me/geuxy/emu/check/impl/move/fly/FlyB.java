@@ -3,6 +3,7 @@ package me.geuxy.emu.check.impl.move.fly;
 import me.geuxy.emu.check.AbstractCheck;
 import me.geuxy.emu.check.CheckInfo;
 import me.geuxy.emu.data.PlayerData;
+import me.geuxy.emu.exempt.ExemptType;
 import me.geuxy.emu.packet.Packet;
 import me.geuxy.emu.utils.entity.PlayerUtil;
 import me.geuxy.emu.utils.world.BlockUtils;
@@ -26,21 +27,24 @@ public class FlyB extends AbstractCheck {
             double lastDeltaY = data.getPositionProcessor().getLastDeltaY();
             double deltaY = data.getPositionProcessor().getDeltaY();
 
-            boolean exempt =
-                data.TELEPORTED ||
-                data.ALLOWED_FLYING ||
-                data.RIDING ||
-                data.LIVING ||
-                data.BLOCK_ABOVE ||
-                data.STEPPING ||
-                data.CLIMBABLE ||
-                PlayerUtil.isNearBoat(data.getPlayer());
+            boolean exempt = isExempt(
+                ExemptType.TELEPORTED,
+                ExemptType.ALLOWED_FLIGHT,
+                ExemptType.IN_VEHICLE,
+                ExemptType.SPAWNED,
+                ExemptType.UNDER_BLOCK,
+                ExemptType.STEPPING,
+                ExemptType.ON_CLIMBABLE,
+                ExemptType.BOAT,
+                ExemptType.VELOCITY_LONG,
+                ExemptType.ON_SLIME
+            );
 
-            if(data.STEPPING && deltaY <= 0.5) {
+            if(isExempt(ExemptType.STEPPING) && deltaY <= 0.5) {
                 this.resetBuffer();
             }
 
-            boolean invalid = lastDeltaY > 0.1D && deltaY <= 0.04D;
+            boolean invalid = lastDeltaY > 0.1D && deltaY <= 0.02D;
 
             if(invalid && !exempt) {
                 if(thriveBuffer() > 1) {

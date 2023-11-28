@@ -3,6 +3,7 @@ package me.geuxy.emu.check.impl.packet.timer;
 import me.geuxy.emu.check.AbstractCheck;
 import me.geuxy.emu.check.CheckInfo;
 import me.geuxy.emu.data.PlayerData;
+import me.geuxy.emu.exempt.ExemptType;
 import me.geuxy.emu.packet.Packet;
 
 @CheckInfo(
@@ -27,9 +28,11 @@ public class TimerB extends AbstractCheck {
             long currentTime = System.currentTimeMillis();
             long diffTime = currentTime - lastTime;
 
-            boolean exempt =
-                data.TELEPORTED ||
-                data.LIVING;
+            boolean exempt = isExempt(
+                ExemptType.TELEPORTED,
+                ExemptType.SPAWNED,
+                ExemptType.LAGGING
+            );
 
             if(exempt && lastTime != 0) {
                 return;

@@ -1,23 +1,20 @@
 package me.geuxy.emu.check.impl.player.ground;
 
+import io.github.retrooper.packetevents.PacketEvents;
+import io.github.retrooper.packetevents.packetwrappers.play.out.blockchange.WrappedPacketOutBlockChange;
 import me.geuxy.emu.check.AbstractCheck;
 import me.geuxy.emu.check.CheckInfo;
 import me.geuxy.emu.data.PlayerData;
+import me.geuxy.emu.exempt.ExemptType;
 import me.geuxy.emu.packet.Packet;
 import me.geuxy.emu.utils.world.BlockUtils;
 
-import me.geuxy.emu.utils.entity.PlayerUtil;
-import org.bukkit.Location;
-import org.bukkit.block.Block;
-
 @CheckInfo(
     name = "Ground",
-    description = "Faking on ground",
+    description = "Spoofing on ground",
     type = "A"
 )
 public class GroundA extends AbstractCheck {
-
-    private Location location;
 
     public GroundA(PlayerData data) {
         super(data);
@@ -26,39 +23,29 @@ public class GroundA extends AbstractCheck {
     @Override
     public void processPacket(Packet packet) {
         if(packet.isFlying()) {
-            boolean exempt =
-                data.LIVING ||
-                data.TELEPORTED ||
-                data.RIDING ||
-                PlayerUtil.isNearBoat(data.getPlayer());
+            boolean exempt = isExempt(
+                ExemptType.SPAWNED,
+                ExemptType.TELEPORTED,
+                ExemptType.IN_VEHICLE,
+                ExemptType.BOAT
+            );
 
-            if(isNearSolid()) {
-                location = data.getPositionProcessor().getFrom();
-                decayBuffer(0.05);
-            } else {
+            if(BlockUtils.getSurroundingBlocks(data.getPlayer(), -1D).stream().noneMatch(b -> b.getType().isSolid())) {
                 if(data.getPositionProcessor().isClientGround() && !exempt) {
                     if (thriveBuffer() > 1) {
-                        data.getPlayer().teleport(location);
+                        this.fail("ground=true");
+                    }
+
+                    WrappedPacketOutBlockChange wrapper = new WrappedPacketOutBlockChange(data.getPositionProcessor().getTo().subtract(0D, 1D, 0D));
+
+                    if(data.getActionProcessor().getPlaceTicks() > 3) {
+                        PacketEvents.get().getPlayerUtils().sendPacket(data.getPlayer(), wrapper);
                     }
                 }
+            } else {
+                this.decayBuffer(0.025);
             }
         }
-    }
-
-    private boolean isNearSolid() {
-        for(double x = -0.31; x < 0.62; x += 0.31) {
-            for (double z = -0.31; z < 0.62; z += 0.31) {
-                Location playerLoc = data.getPlayer().getLocation();
-                Location loc = new Location(data.getPlayer().getWorld(), playerLoc.getX() + x, playerLoc.getY() - 1D, playerLoc.getZ() + z);
-
-                Block block = BlockUtils.getBlock(loc);
-
-                if (block != null && block.getType().isSolid()) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
 }

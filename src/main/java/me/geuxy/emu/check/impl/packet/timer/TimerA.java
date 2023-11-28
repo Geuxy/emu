@@ -3,8 +3,10 @@ package me.geuxy.emu.check.impl.packet.timer;
 import me.geuxy.emu.check.AbstractCheck;
 import me.geuxy.emu.check.CheckInfo;
 import me.geuxy.emu.data.PlayerData;
+import me.geuxy.emu.exempt.ExemptType;
 import me.geuxy.emu.packet.Packet;
 
+import javax.swing.text.html.ListView;
 import java.util.concurrent.TimeUnit;
 
 @CheckInfo(
@@ -27,10 +29,10 @@ public class TimerA extends AbstractCheck {
     @Override
     public void processPacket(Packet packet) {
         if(packet.isFlying()) {
-            boolean exempt =
-                data.TELEPORTED ||
-                data.LIVING ||
-                this.lastTime != 0;
+            boolean exempt = isExempt(
+                ExemptType.TELEPORTED,
+                ExemptType.SPAWNED
+            ) || this.lastTime != 0;
 
             long currentTime = System.nanoTime();
             long lastTime = this.lastTime != 0 ? this.lastTime : currentTime - 50L;

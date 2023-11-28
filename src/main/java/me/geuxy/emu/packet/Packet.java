@@ -36,4 +36,24 @@ public class Packet {
         return packetId == Play.Client.TRANSACTION;
     }
 
+    public boolean isClientCommand() {
+        return packetId == Play.Client.CLIENT_COMMAND;
+    }
+
+    public boolean isSteerVehicle() {
+        return packetId == Play.Client.STEER_VEHICLE;
+    }
+
+    public boolean isBlockDig() {
+        return packetId == Play.Client.BLOCK_DIG;
+    }
+
+    public boolean isBlockPlace() {
+        return packetId == Play.Client.BLOCK_PLACE;
+    }
+
+    public boolean isHeldItemSlot() {
+        return packetId == Play.Client.HELD_ITEM_SLOT;
+    }
+
 }

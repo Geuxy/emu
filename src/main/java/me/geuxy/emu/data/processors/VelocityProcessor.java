@@ -1,14 +1,12 @@
 package me.geuxy.emu.data.processors;
 
 import io.github.retrooper.packetevents.PacketEvents;
-import io.github.retrooper.packetevents.packettype.PacketType;
 import io.github.retrooper.packetevents.packetwrappers.play.in.transaction.WrappedPacketInTransaction;
 import io.github.retrooper.packetevents.packetwrappers.play.out.transaction.WrappedPacketOutTransaction;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import me.geuxy.emu.data.PlayerData;
-import me.geuxy.emu.packet.Packet;
 import me.geuxy.emu.utils.math.MathUtil;
 
 import me.geuxy.emu.utils.entity.Velocity;
@@ -29,7 +27,7 @@ public class VelocityProcessor {
 
     private final Map<Short, Vector> pending = new HashMap<>();
 
-    private final Velocity transVelocity = new Velocity();
+    private final Velocity transactionVelocity = new Velocity();
 
     public void handle(double x, double y, double z) {
         this.lastX = x;
@@ -52,14 +50,14 @@ public class VelocityProcessor {
         pending.put(velocityID, new Vector(x, y, z));
     }
 
-    public void handleTransaction(WrappedPacketInTransaction packet) {
-        pending.computeIfPresent(packet.getActionNumber(), (id, vector) -> {
-            transVelocity.setX(vector.getX());
-            transVelocity.setY(vector.getY());
-            transVelocity.setZ(vector.getZ());
+    public void handleTransaction(WrappedPacketInTransaction wrapper) {
+        pending.computeIfPresent(wrapper.getActionNumber(), (id, vector) -> {
+            transactionVelocity.setX(vector.getX());
+            transactionVelocity.setY(vector.getY());
+            transactionVelocity.setZ(vector.getZ());
 
-            transVelocity.setIndex(transVelocity.getIndex() + 1);
-            pending.remove(packet.getActionNumber());
+            transactionVelocity.setIndex(transactionVelocity.getIndex() + 1);
+            pending.remove(wrapper.getActionNumber());
 
             return vector;
         });

@@ -3,6 +3,7 @@ package me.geuxy.emu.check.impl.move.noslow;
 import me.geuxy.emu.check.AbstractCheck;
 import me.geuxy.emu.check.CheckInfo;
 import me.geuxy.emu.data.PlayerData;
+import me.geuxy.emu.exempt.ExemptType;
 import me.geuxy.emu.packet.Packet;
 
 @CheckInfo(
@@ -21,13 +22,14 @@ public class NoSlowA extends AbstractCheck {
     @Override
     public void processPacket(Packet packet) {
         if(packet.isFlying()) {
-            boolean exempt =
-                data.TELEPORTED ||
-                data.LIVING ||
-                data.ALLOWED_FLYING ||
-                data.RIDING;
+            boolean exempt = isExempt(
+                ExemptType.TELEPORTED,
+                ExemptType.SPAWNED,
+                ExemptType.ALLOWED_FLIGHT,
+                ExemptType.IN_VEHICLE
+            );
 
-            if(data.WEB) {
+            if(isExempt(ExemptType.IN_WEB)) {
                 if(ticks < 10) {
                     this.ticks++;
                 }
@@ -39,7 +41,7 @@ public class NoSlowA extends AbstractCheck {
 
             double maxSpeed = data.getPlayer().isSneaking() ? 0.037 : (data.getPlayer().getFallDistance() > 0.1 ? 0.078 : 0.1137);
 
-            maxSpeed *= data.getSpeedMultiplier();
+            maxSpeed += data.getSpeedMultiplier();
 
             boolean invalid = ticks > 1 && speed > maxSpeed;
 

@@ -10,6 +10,7 @@ import me.geuxy.emu.listeners.PlayerListener;
 import me.geuxy.emu.processors.PacketProcessor;
 
 import org.bukkit.Bukkit;
+import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.logging.Logger;
@@ -48,12 +49,10 @@ public enum Emu {
         Bukkit.getPluginManager().registerEvents(new PlayerListener(), this.plugin);
     }
 
-    public void save() {
-
-    }
-
     public void stop() {
-
+        PacketEvents.get().unregisterAllListeners();
+        HandlerList.unregisterAll(this.plugin);
+        this.dataManager.getDataMap().clear();
     }
 
 }

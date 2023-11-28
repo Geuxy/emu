@@ -3,6 +3,7 @@ package me.geuxy.emu.check.impl.move.speed;
 import me.geuxy.emu.check.AbstractCheck;
 import me.geuxy.emu.check.CheckInfo;
 import me.geuxy.emu.data.PlayerData;
+import me.geuxy.emu.exempt.ExemptType;
 import me.geuxy.emu.packet.Packet;
 
 @CheckInfo(
@@ -19,9 +20,10 @@ public class SpeedD extends AbstractCheck {
     @Override
     public void processPacket(Packet packet) {
         if(packet.isFlying()) {
-            boolean exempt =
-                data.TELEPORTED ||
-                data.LIVING;
+            boolean exempt = isExempt(
+                ExemptType.TELEPORTED,
+                ExemptType.SPAWNED
+            );
 
             double maxSpeed = 2D;
             double speed = data.getPositionProcessor().getSpeed();

@@ -1,7 +1,10 @@
 package me.geuxy.emu.utils.math;
 
+import me.geuxy.emu.utils.LimitedList;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
+
+import java.util.Collection;
 
 public class MathUtil {
 
@@ -30,7 +33,29 @@ public class MathUtil {
         double dist = MathUtil.hypot(diffX, diffZ);
         float yaw = (float) (Math.atan2(diffZ, diffX) * 180.0 / Math.PI) - 90.0f;
         float pitch = (float) (-Math.atan2(diffY, dist) * 180.0 / Math.PI);
-        return new float[]{yaw, pitch};
+        return new float[] {yaw, pitch};
+    }
+
+    public static double getVarianceSquared(LimitedList<? extends Number> samples) {
+        double variance = 0, sum = 0, average;
+
+        int i = 0;
+        for (Number n : samples) {
+            sum += n.doubleValue();
+            ++i;
+        }
+
+        average = sum / i;
+
+        for (Number n : samples) {
+            variance += Math.pow(n.doubleValue() - average, 2.0);
+        }
+
+        return Math.sqrt(variance);
+    }
+
+    public static double getAverage(LimitedList<? extends Number> samples) {
+        return samples.stream().mapToDouble(Number::doubleValue).average().orElse(0);
     }
 
 }

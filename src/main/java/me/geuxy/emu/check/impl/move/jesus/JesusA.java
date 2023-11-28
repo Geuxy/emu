@@ -3,6 +3,7 @@ package me.geuxy.emu.check.impl.move.jesus;
 import me.geuxy.emu.check.AbstractCheck;
 import me.geuxy.emu.check.CheckInfo;
 import me.geuxy.emu.data.PlayerData;
+import me.geuxy.emu.exempt.ExemptType;
 import me.geuxy.emu.packet.Packet;
 
 @CheckInfo(
@@ -21,15 +22,15 @@ public class JesusA extends AbstractCheck {
     @Override
     public void processPacket(Packet packet) {
         if(packet.isFlying()) {
-            boolean exempt =
-                data.TELEPORTED ||
-                data.LIVING ||
-                data.CLIMBABLE ||
-                data.getPositionProcessor().isClientGround() ||
-                data.ALLOWED_FLYING;
+            boolean exempt = isExempt(
+                ExemptType.TELEPORTED,
+                ExemptType.SPAWNED,
+                ExemptType.ON_CLIMBABLE,
+                ExemptType.ALLOWED_FLIGHT
+            ) || data.getPositionProcessor().isClientGround();
 
-            if(data.LIQUID) {
-                if(ticks < 10) {
+            if(isExempt(ExemptType.IN_LIQUID)) {
+                if(ticks < 21) {
                     this.ticks++;
                 }
             } else {
@@ -42,19 +43,22 @@ public class JesusA extends AbstractCheck {
                 }
             }
 
-            double lastSpeed = data.getPositionProcessor().getLastSpeed();
+            if(isExempt(ExemptType.VELOCITY) && ticks > 10) {
+                this.ticks = 0;
+            }
+
             double speed = data.getPositionProcessor().getSpeed();
+            double lastSpeed = data.getPositionProcessor().getLastSpeed();
 
-            double predicted = (lastSpeed * 0.909997) + 2.54711021E-2;
-            double maxSpeed = 0.215;
+            double maxSpeed = ticks > 20 ? 0.15 : (lastSpeed * 0.909997) + 2.54711021E-2;
 
-            maxSpeed *= data.getSpeedMultiplier();
+            maxSpeed += data.getSpeedMultiplier();
 
-            boolean invalid = data.LIQUID && speed > (ticks > 25 ? maxSpeed : Math.max(predicted, maxSpeed));
+            boolean invalid = isExempt(ExemptType.IN_LIQUID) && speed > maxSpeed && ticks > 16;
 
             if(invalid && !exempt) {
                 if(thriveBuffer() > 2) {
-                    this.fail("tick=" + ticks, "max=" + (ticks > 25 ? maxSpeed : Math.max(predicted, maxSpeed)), "delta=" + speed);
+                    this.fail("tick=" + ticks, "max=" + maxSpeed, "delta=" + speed);
                 }
             }
             this.decayBuffer(0.05);

@@ -3,7 +3,9 @@ package me.geuxy.emu.utils.world;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -85,6 +87,42 @@ public class BlockUtils {
             return false;
         }
         return block.getType().equals(material);
+    }
+
+    public static List<Block> getSurroundingBlocks(Player player, double y) {
+        List<Block> blockList = new ArrayList<>();
+
+        for(double x = -0.3; x < 0.6; x += 0.3) {
+            for (double z = -0.3; z < 0.6; z += 0.3) {
+                Location playerLoc = player.getLocation();
+                Location loc = new Location(player.getWorld(), playerLoc.getX() + x, playerLoc.getY() + y, playerLoc.getZ() + z);
+
+                Block block = getBlock(loc);
+
+                if (block != null) {
+                    blockList.add(block);
+                }
+            }
+        }
+        return blockList;
+    }
+
+    public static List<Block> getSurroundingBlocks(Player player, double y, double radius) {
+        List<Block> blockList = new ArrayList<>();
+
+        for(double x = -radius; x < radius * 2; x += radius) {
+            for (double z = -radius; z < radius * 2; z += radius) {
+                Location playerLoc = player.getLocation();
+                Location loc = new Location(player.getWorld(), playerLoc.getX() + x, playerLoc.getY() + y, playerLoc.getZ() + z);
+
+                Block block = getBlock(loc);
+
+                if (block != null) {
+                    blockList.add(block);
+                }
+            }
+        }
+        return blockList;
     }
 
 }

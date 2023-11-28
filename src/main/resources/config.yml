@@ -20,6 +20,13 @@ checks:
 
   # Combat
 
+  criticals:
+    a: # Packet jump crit
+      enabled: true
+      punishable: true
+      max-level: 10
+      min-buffer: 0
+
   killaura:
     a: # Attacked while dead
       enabled: true
@@ -27,6 +34,11 @@ checks:
       max-level: 1
       min-buffer: 0
 
+    b: # Attacked while blocking
+      enabled: true
+      punishable: true
+      max-level: 1
+      min-buffer: 0
 
   velocity:
     a: # Vertical velocity
@@ -71,10 +83,16 @@ checks:
       min-buffer: 0
 
   jesus:
-    a: # Speed in liquid
+    a: # Horizontal movement in liquid
       enabled: true
       punishable: true
-      max-level: 10
+      max-level: 15
+      min-buffer: 0
+
+    b: # Vertical movement in liquid
+      enabled: true
+      punishable: true
+      max-level: 20
       min-buffer: 0
 
   jump:
@@ -136,11 +154,22 @@ checks:
       max-level: 20
       min-buffer: 0
 
-
   # Packet
 
   badpackets:
     a: # Impossible pitch
+      enabled: true
+      punishable: true
+      max-level: 1
+      min-buffer: 0
+
+    b: # Place Dig on same tick
+      enabled: true
+      punishable: true
+      max-level: 1
+      min-buffer: 0
+
+    c: # Quick slot switching
       enabled: true
       punishable: true
       max-level: 1
@@ -153,12 +182,17 @@ checks:
       max-level: 5
       min-buffer: 0
 
-    b: # Average
+    b: # 50s
       enabled: true
       punishable: true
       max-level: 25
       min-buffer: 0
 
+    c: # Average
+      enabled: true
+      punishable: true
+      max-level: 25
+      min-buffer: 0
   # Player
 
   ground:

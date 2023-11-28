@@ -3,6 +3,7 @@ package me.geuxy.emu.check.impl.move.climb;
 import me.geuxy.emu.check.AbstractCheck;
 import me.geuxy.emu.check.CheckInfo;
 import me.geuxy.emu.data.PlayerData;
+import me.geuxy.emu.exempt.ExemptType;
 import me.geuxy.emu.packet.Packet;
 
 @CheckInfo(
@@ -19,10 +20,11 @@ public class ClimbA extends AbstractCheck {
     @Override
     public void processPacket(Packet packet) {
         if(packet.isFlying()) {
-            boolean exempt =
-                data.TELEPORTED ||
-                data.LIVING ||
-                data.ALLOWED_FLYING;
+            boolean exempt = isExempt(
+                ExemptType.TELEPORTED,
+                ExemptType.SPAWNED,
+                ExemptType.ALLOWED_FLIGHT
+            );
 
             int ticks = data.getPositionProcessor().getClimbTicks();
 
@@ -32,9 +34,9 @@ public class ClimbA extends AbstractCheck {
             double deltaY = data.getPositionProcessor().getDeltaY();
             double lastDeltaY = data.getPositionProcessor().getLastDeltaY();
 
-            boolean climbing = Math.abs(deltaY - lastDeltaY) < 1E-4 && !data.getPositionProcessor().isClientGround() && data.CLIMBABLE;
+            boolean climbing = isExempt(ExemptType.ON_CLIMBABLE) && Math.abs(deltaY - lastDeltaY) < 1E-4 && !data.getPositionProcessor().isClientGround();
 
-            boolean invalid = ticks > 2 && speed > 0.16;
+            boolean invalid = ticks > 2 && speed > 0.18;
             boolean invalid2 = ticks < 3 && speed >= lastSpeed;
 
             if(climbing && (invalid || invalid2) && !exempt) {

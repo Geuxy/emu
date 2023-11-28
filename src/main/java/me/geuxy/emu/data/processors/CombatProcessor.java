@@ -18,13 +18,13 @@ public class CombatProcessor {
 
     private int hitTicks;
 
-    public void handleUseEntity(WrappedPacketInUseEntity packet) {
-        if(packet.getAction() != WrappedPacketInUseEntity.EntityUseAction.ATTACK || packet.getEntity() == null) {
+    public void handleUseEntity(WrappedPacketInUseEntity wrapper) {
+        if(wrapper.getAction() != WrappedPacketInUseEntity.EntityUseAction.ATTACK || wrapper.getEntity() == null) {
             return;
         }
 
         this.lastHitEntity = hitEntity;
-        this.hitEntity = packet.getEntity();
+        this.hitEntity = wrapper.getEntity();
         this.hitTicks = 0;
     }
 

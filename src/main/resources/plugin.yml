@@ -1,7 +1,13 @@
 name: EmuAC
-version: b1
+version: b2
 description: Finally an anti-cheat made by an aussie
-main: me.geuxy.emu.plugin.EmuPlugin
+main: ac.emu.plugin.EmuPlugin
+
+commands:
+  emu:
+    aliases: "ac"
+    description: "Cool commands for emu"
+    permission: "emu.command"
 
 depend:
   - packetevents

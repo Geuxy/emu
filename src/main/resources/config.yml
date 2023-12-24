@@ -3,42 +3,27 @@
 message:
 
   # Cool prefix
-  prefix: "&6Emu &7>>"
+  prefix: "&7[&6Emu&7]"
 
   # Message sent when a player fails a check
   # Prefixes:
-  # {prefix} - prefix from above value
+  # {prefix} - prefix from first value
   # {player} - player's name that failed
   # {check} - check name the player failed
   # {level} - new check level
   # {max} - maximum check level
   # {info} - reason why the player failed
   # {type} - the check type
-  fail: "{prefix} &6{player} &7failed &6{check} ({type}) &7[&6{level}&7/{max}]"
+  # {values} - details about the fail (what tick, difference in delta, etc.)
+  fail: "{prefix} &6{player} &7failed &6{check} ({type}) &7x{level}"
+
+  # Warning sent when a player gets teleported by the ghost block processor
+  # Prefixes:
+  # {prefix} - prefix from first value
+  # {player} - player's name that was teleported
+  gbp: "{prefix} &7[&6Warning&7] &6{player} &7was on a ghost block"
 
 checks:
-
-  # Combat
-
-  criticals:
-    a: # Packet jump crit
-      enabled: true
-      punishable: true
-      max-level: 10
-      min-buffer: 0
-
-  killaura:
-    a: # Attacked while dead
-      enabled: true
-      punishable: true
-      max-level: 1
-      min-buffer: 0
-
-    b: # Attacked while blocking
-      enabled: true
-      punishable: true
-      max-level: 1
-      min-buffer: 0
 
   velocity:
     a: # Vertical velocity
@@ -47,14 +32,12 @@ checks:
       max-level: 20
       min-buffer: 0
 
-  reach:
-    a: # Basic distance
+    b: # Horizontal velocity
       enabled: true
       punishable: true
-      max-level: 25
+      max-level: 20
       min-buffer: 0
 
-  # Move
 
   climb:
     a: # Speed on ladder
@@ -101,6 +84,11 @@ checks:
       punishable: true
       max-level: 20
       min-buffer: 0
+    b: # Max speed on jump
+      enabled: true
+      punishable: true
+      max-level: 20
+      min-buffer: 0
 
   noslow:
     a: # Speed in web
@@ -134,6 +122,13 @@ checks:
       max-level: 3
       min-buffer: 0
 
+  move:
+    a: # Invalid jump (ground speed detection)
+      enabled: true
+      punishable: true
+      max-level: 20
+      min-buffer: 0
+
   step:
     a: # Full block step
       enabled: true
@@ -147,14 +142,18 @@ checks:
       max-level: 3
       min-buffer: 0
 
+    c: # Multi packet step
+      enabled: true
+      punishable: true
+      max-level: 3
+      min-buffer: 0
+
   strafe:
     a: # Prediction strafe
       enabled: true
       punishable: true
       max-level: 20
       min-buffer: 0
-
-  # Packet
 
   badpackets:
     a: # Impossible pitch
@@ -176,10 +175,10 @@ checks:
       min-buffer: 0
 
   timer:
-    a: # Balance
+    a: # 50s
       enabled: true
       punishable: true
-      max-level: 5
+      max-level: 25
       min-buffer: 0
 
     b: # 50s
@@ -193,7 +192,6 @@ checks:
       punishable: true
       max-level: 25
       min-buffer: 0
-  # Player
 
   ground:
     a: # Ground spoof

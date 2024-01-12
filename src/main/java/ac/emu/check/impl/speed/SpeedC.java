@@ -2,14 +2,15 @@ package ac.emu.check.impl.speed;
 
 import ac.emu.check.Check;
 import ac.emu.check.CheckInfo;
-import ac.emu.data.PlayerData;
+import ac.emu.user.EmuPlayer;
 import ac.emu.exempt.ExemptType;
 import ac.emu.packet.Packet;
+import org.bukkit.potion.PotionEffectType;
 
 @CheckInfo(name = "Speed", description = "Invalid horizontal movement in air", type = "C")
 public class SpeedC extends Check {
 
-    public SpeedC(PlayerData data) {
+    public SpeedC(EmuPlayer data) {
         super(data);
     }
 
@@ -28,16 +29,18 @@ public class SpeedC extends Check {
             double lastSpeed = data.getMovementData().getLastSpeed();
             double speed = data.getMovementData().getSpeed();
 
-            // TODO: Fix false when using swiftness
-            if(data.getMovementData().isLastClientGround() && !data.getMovementData().isClientGround()) {
-                double prediction = lastSpeed * 1.991;
-                double difference = speed - prediction;
+            double prediction = lastSpeed * 1.991;
 
-                boolean invalid = difference > 6E-4 && speed > 0.61;
+            prediction += 0.2 * data.getUtilities().getAmplifier(PotionEffectType.SPEED);
 
-                if(invalid && !exempt) { // 0.613 0.644 0.676
-                    this.fail(String.format("diff=%.5f, predicted=%.5f, speed=%.5f", difference, prediction, speed));
-                }
+            double difference = speed - prediction;
+
+            boolean invalid = difference > 6E-4 && speed > 0.61 && data.getMovementData().isLastClientGround() && !data.getMovementData().isClientGround();
+
+            if(invalid && !exempt) {
+                this.fail(String.format("diff=%.5f, predicted=%.5f, speed=%.5f", difference, prediction, speed));
+            } else {
+                this.reward();
             }
         }
     }

@@ -11,7 +11,9 @@ public enum ConfigValues {
 
     MESSAGE_PREFIX("message.prefix"),
     MESSAGE_FAIL("message.fail"),
-    MESSAGE_GBP("message.gbp");
+    MESSAGE_GBP("message.gbp"),
+    PUNISHMENTS_KICK("punishments.kick"),
+    PUNISHMENTS_BAN("punishments.ban");
 
     private final String prefix;
 
@@ -31,8 +33,16 @@ public enum ConfigValues {
         return Emu.INSTANCE.getPlugin().getConfig().getInt(getPrefix(check) + "." + "max-level");
     }
 
-    public static double getMinBuffer(Check check) {
-        return Emu.INSTANCE.getPlugin().getConfig().getInt(getPrefix(check) + "." + "min-buffer");
+    public static double getFlagBuffer(Check check) {
+        return Emu.INSTANCE.getPlugin().getConfig().getInt(getPrefix(check) + ".buffer.flag");
+    }
+
+    public static double getBufferDecay(Check check) {
+        return Emu.INSTANCE.getPlugin().getConfig().getInt(getPrefix(check) + ".buffer.decay");
+    }
+
+    public static String getDisplay(Check check) {
+        return Emu.INSTANCE.getPlugin().getConfig().getString(getPrefix(check) + ".display");
     }
 
     public static boolean isEnabled(Check check) {

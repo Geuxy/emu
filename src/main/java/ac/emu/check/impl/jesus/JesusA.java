@@ -2,7 +2,7 @@ package ac.emu.check.impl.jesus;
 
 import ac.emu.check.Check;
 import ac.emu.check.CheckInfo;
-import ac.emu.data.PlayerData;
+import ac.emu.user.EmuPlayer;
 import ac.emu.exempt.ExemptType;
 import ac.emu.packet.Packet;
 
@@ -11,7 +11,7 @@ public class JesusA extends Check {
 
     private double ticks;
 
-    public JesusA(PlayerData data) {
+    public JesusA(EmuPlayer data) {
         super(data);
     }
 
@@ -53,11 +53,10 @@ public class JesusA extends Check {
             boolean invalid = isExempt(ExemptType.IN_LIQUID) && speed > maxSpeed && ticks > 16;
 
             if(invalid && !exempt) {
-                if(thriveBuffer() > 2) {
-                    this.fail(String.format("tick=%.0f, max=%.5f, speed=%.5f", ticks, maxSpeed, speed));
-                }
+                this.fail(String.format("tick=%.0f, max=%.5f, speed=%.5f", ticks, maxSpeed, speed));
+            } else {
+                this.reward();
             }
-            this.decayBuffer(0.05);
         }
     }
 

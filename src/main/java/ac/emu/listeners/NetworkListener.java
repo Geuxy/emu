@@ -5,14 +5,14 @@ import com.github.retrooper.packetevents.event.PacketReceiveEvent;
 import com.github.retrooper.packetevents.event.PacketSendEvent;
 
 import ac.emu.Emu;
-import ac.emu.data.PlayerData;
+import ac.emu.user.EmuPlayer;
 import ac.emu.packet.Packet;
 
 public class NetworkListener extends PacketListenerAbstract {
 
     @Override
     public void onPacketReceive(PacketReceiveEvent event) {
-        PlayerData data = Emu.INSTANCE.getDataManager().get(event.getUser().getUUID());
+        EmuPlayer data = Emu.INSTANCE.getDataManager().get(event.getUser().getUUID());
 
         if(data != null) {
             data.handle(new Packet(event));
@@ -21,7 +21,7 @@ public class NetworkListener extends PacketListenerAbstract {
 
     @Override
     public void onPacketSend(PacketSendEvent event) {
-        PlayerData data = Emu.INSTANCE.getDataManager().get(event.getUser().getUUID());
+        EmuPlayer data = Emu.INSTANCE.getDataManager().get(event.getUser().getUUID());
 
         if(data != null) {
             data.handle(new Packet(event));

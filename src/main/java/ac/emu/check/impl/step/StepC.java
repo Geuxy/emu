@@ -2,7 +2,7 @@ package ac.emu.check.impl.step;
 
 import ac.emu.check.Check;
 import ac.emu.check.CheckInfo;
-import ac.emu.data.PlayerData;
+import ac.emu.user.EmuPlayer;
 import ac.emu.exempt.ExemptType;
 import ac.emu.packet.Packet;
 
@@ -11,7 +11,7 @@ public class StepC extends Check {
 
     private int packets;
 
-    public StepC(PlayerData data) {
+    public StepC(EmuPlayer data) {
         super(data);
     }
 
@@ -33,10 +33,12 @@ public class StepC extends Check {
 
             this.packets = lastMathGround ? 0 : ++this.packets;
 
-            boolean invalid = deltaY <= 0.5 && deltaY > 0 && packets > 1 && packets < 5 && mathGround;
+            boolean invalid = deltaY <= 0.5 && deltaY > 0 && packets > 1 && packets <= 4 && mathGround;
 
             if(invalid && !exempt) {
-                this.fail();
+                this.fail(String.format("deltaY=%.5f, packets=%d", deltaY, packets));
+            } else {
+                this.reward();
             }
         }
     }

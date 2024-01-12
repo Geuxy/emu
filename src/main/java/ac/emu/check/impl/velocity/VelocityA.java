@@ -2,14 +2,14 @@ package ac.emu.check.impl.velocity;
 
 import ac.emu.check.Check;
 import ac.emu.check.CheckInfo;
-import ac.emu.data.PlayerData;
+import ac.emu.user.EmuPlayer;
 import ac.emu.exempt.ExemptType;
 import ac.emu.packet.Packet;
 
 @CheckInfo(name = "Velocity", description = "Invalid vertical velocity", type = "A")
 public class VelocityA extends Check {
 
-    public VelocityA(PlayerData data) {
+    public VelocityA(EmuPlayer data) {
         super(data);
     }
 
@@ -40,11 +40,9 @@ public class VelocityA extends Check {
             boolean invalid = difference > 1E-10;
 
             if(invalid && !exempt) {
-                if(thriveBuffer() > 1) {
-                    this.fail(String.format("tick=%d, diff=%.5f, deltaY=%.5f, predicted=%.5f", ticks, difference, deltaY, predicted));
-                }
+                this.fail(String.format("tick=%d, diff=%.5f, deltaY=%.5f, predicted=%.5f", ticks, difference, deltaY, predicted));
             } else {
-                this.decayBuffer(0.1);
+                this.reward();
             }
         }
     }

@@ -2,7 +2,7 @@ package ac.emu.check.impl.move;
 
 import ac.emu.check.Check;
 import ac.emu.check.CheckInfo;
-import ac.emu.data.PlayerData;
+import ac.emu.user.EmuPlayer;
 import ac.emu.exempt.ExemptType;
 import ac.emu.packet.Packet;
 
@@ -10,7 +10,7 @@ import ac.emu.packet.Packet;
 @CheckInfo(name = "Move", description = "Invalid jump", type = "A")
 public class MoveA extends Check {
 
-    public MoveA(PlayerData data) {
+    public MoveA(EmuPlayer data) {
         super(data);
     }
 
@@ -42,11 +42,9 @@ public class MoveA extends Check {
             boolean invalid2 = lastAirTicks == 1 && data.getMovementData().isClientGround() && !step;
 
             if((invalid || invalid2) && !exempt) {
-                if(thriveBuffer() > 7) {
-                    this.fail(String.format("deltaY=%.5f", deltaY));
-                }
+                this.fail(String.format("deltaY=%.5f", deltaY));
             } else {
-                this.decayBuffer(0.1);
+                this.reward();
             }
         }
     }

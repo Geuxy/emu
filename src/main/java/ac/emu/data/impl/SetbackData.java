@@ -2,7 +2,7 @@ package ac.emu.data.impl;
 
 import ac.emu.Emu;
 import ac.emu.data.Data;
-import ac.emu.data.PlayerData;
+import ac.emu.user.EmuPlayer;
 import ac.emu.packet.Packet;
 
 import lombok.Getter;
@@ -16,7 +16,7 @@ public class SetbackData extends Data {
 
     private long lastSetback;
 
-    public SetbackData(PlayerData data) {
+    public SetbackData(EmuPlayer data) {
         super(data);
         this.lastSetback = System.currentTimeMillis();
     }

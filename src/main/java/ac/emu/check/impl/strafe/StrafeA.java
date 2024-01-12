@@ -2,7 +2,7 @@ package ac.emu.check.impl.strafe;
 
 import ac.emu.check.Check;
 import ac.emu.check.CheckInfo;
-import ac.emu.data.PlayerData;
+import ac.emu.user.EmuPlayer;
 import ac.emu.data.impl.MovementData;
 import ac.emu.exempt.ExemptType;
 import ac.emu.packet.Packet;
@@ -10,7 +10,7 @@ import ac.emu.packet.Packet;
 @CheckInfo(name = "Strafe", description = "Moved wrong in air", type = "A")
 public class StrafeA extends Check {
 
-    public StrafeA(PlayerData data) {
+    public StrafeA(EmuPlayer data) {
         super(data);
     }
 
@@ -47,10 +47,9 @@ public class StrafeA extends Check {
             boolean invalid = (differenceX > 0.031 || differenceZ > 0.031) && data.getMovementData().getSpeed() > 0.3;
 
             if(invalid && !exempt) {
-                if(thriveBuffer() > 5) {
-                    this.fail(String.format("tick=%d, predX=%.5f, predZ=%.5f, deltaX=%.5f, deltaZ=%.5f, diffX=%.5f, diffZ=%.5f", airTicks, predDeltaX, predDeltaZ, deltaX, deltaZ, differenceX, differenceZ));
-                }
-                decayBuffer(0.025);
+                this.fail(String.format("tick=%d, predX=%.5f, predZ=%.5f, deltaX=%.5f, deltaZ=%.5f, diffX=%.5f, diffZ=%.5f", airTicks, predDeltaX, predDeltaZ, deltaX, deltaZ, differenceX, differenceZ));
+            } else {
+                this.reward();
             }
         }
     }

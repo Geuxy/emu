@@ -2,14 +2,14 @@ package ac.emu.check.impl.fly;
 
 import ac.emu.check.Check;
 import ac.emu.check.CheckInfo;
-import ac.emu.data.PlayerData;
+import ac.emu.user.EmuPlayer;
 import ac.emu.exempt.ExemptType;
 import ac.emu.packet.Packet;
 
 @CheckInfo(name = "Fly", description = "Invalid vertical movement", type = "A")
 public class FlyA extends Check {
 
-    public FlyA(PlayerData data) {
+    public FlyA(EmuPlayer data) {
         super(data);
     }
 
@@ -40,19 +40,17 @@ public class FlyA extends Check {
                     ExemptType.EXPLOSION,
                     ExemptType.ON_SLIME,
                     ExemptType.VELOCITY
-                ) || /* difference == 0.7840000152587834E-1D ||
-                    difference == 0.6349722830977471 || */
-                    difference == 0.01524397154484497 ||
-                    isExempt(ExemptType.VELOCITY_LONG) && isExempt(ExemptType.NEAR_WALL);
+                ) || isExempt(ExemptType.VELOCITY_LONG) && isExempt(ExemptType.NEAR_WALL)
+
+                // The "ima kms bridging up while moving a tiny bit fix" pro max
+                || (deltaY >= 0.33319999363422 && deltaY <= 0.40444491418477924 && data.getActionData().getPlaceTicks() <= 9 && airTicks == 2 && data.getMovementData().getSpeed() < 0.03);
 
                 boolean invalid = difference > 1E-13D;
 
                 if (invalid && !exempt) {
-                    if (thriveBuffer() > 2) {
-                        this.fail(String.format("diff=%.5f, tick=%d, predicted=%.5f, deltaY=%.5f", difference, airTicks, predicted, deltaY));
-                    }
+                    this.fail(String.format("diff=%.5f, tick=%d, predicted=%.5f, deltaY=%.5f", difference, airTicks, predicted, deltaY));
                 } else {
-                    this.decayBuffer(0.01D);
+                    this.reward();
                 }
             }
         }

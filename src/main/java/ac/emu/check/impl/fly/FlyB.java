@@ -2,14 +2,14 @@ package ac.emu.check.impl.fly;
 
 import ac.emu.check.Check;
 import ac.emu.check.CheckInfo;
-import ac.emu.data.PlayerData;
+import ac.emu.user.EmuPlayer;
 import ac.emu.exempt.ExemptType;
 import ac.emu.packet.Packet;
 
 @CheckInfo(name = "Fly", description = "Sudden motion reduction", type = "B")
 public class FlyB extends Check {
 
-    public FlyB(PlayerData data) {
+    public FlyB(EmuPlayer data) {
         super(data);
     }
 
@@ -43,11 +43,9 @@ public class FlyB extends Check {
             boolean invalid = lastDeltaY > 0.1D && deltaY <= 0.02D && !step;
 
             if(invalid && !exempt) {
-                if(thriveBuffer() > 1) {
-                    this.fail(String.format("deltaY=%.5f, lastDeltaY=%.5f, tick=%d", deltaY, lastDeltaY, airTicks));
-                }
+                this.fail(String.format("deltaY=%.5f, lastDeltaY=%.5f, tick=%d", deltaY, lastDeltaY, airTicks));
             }
-            this.decayBuffer(0.02);
+            this.reward();
         }
     }
 

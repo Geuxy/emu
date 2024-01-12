@@ -1,17 +1,17 @@
 package ac.emu.data.impl;
 
 import ac.emu.data.Data;
-import ac.emu.data.PlayerData;
+import ac.emu.user.EmuPlayer;
 import ac.emu.packet.Packet;
-import ac.emu.utils.BoundingBox;
-import ac.emu.utils.MathUtil;
-import ac.emu.utils.BlockUtils;
+import ac.emu.utils.*;
+import ac.emu.exempt.ExemptType;
+
+import ac.emu.utils.location.PastLocation;
+import ac.emu.utils.mcp.AxisAlignedBB;
 import com.github.retrooper.packetevents.event.PacketReceiveEvent;
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPlayerFlying;
 
 import lombok.Getter;
-
-import ac.emu.exempt.ExemptType;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -30,17 +30,21 @@ public class MovementData extends Data {
     private double deltaX, deltaY, deltaZ, lastDeltaX, lastDeltaY, lastDeltaZ;
     private double speed, lastSpeed;
 
-    private boolean clientGround, lastClientGround, serverGround, mathGround, lastMathGround;
+    private boolean clientGround, lastClientGround, serverGround, mathGround, lastMathGround, position, lastPosition;
 
     private int groundTicks, airTicks, climbTicks, lastGroundTicks, lastAirTicks, lastClimbTicks, sinceInVehicleTicks, sinceUnderBlockTicks, sinceOnIceTicks;
 
     private Location from, to, lastLocationOnGround;
 
+    private final LimitedList<PastLocation> pastLocations = new LimitedList<>(30);
+
     private final List<Block> blocks = new ArrayList<>();
+
+    private AxisAlignedBB boundingBox;
 
     private long lastFlying, deltaFlying;
 
-    public MovementData(PlayerData data) {
+    public MovementData(EmuPlayer data) {
         super(data);
     }
 
@@ -51,6 +55,9 @@ public class MovementData extends Data {
 
             boolean position = wrapper.hasPositionChanged();
             boolean look = wrapper.hasRotationChanged();
+
+            this.lastPosition = position;
+            this.position = position;
 
             this.lastYaw = yaw;
             this.lastPitch = pitch;
@@ -93,6 +100,8 @@ public class MovementData extends Data {
             this.from = new Location(data.getPlayer().getWorld(), lastX, lastY, lastZ, lastYaw, lastPitch);
             this.to = new Location(data.getPlayer().getWorld(), x, y, z, yaw, pitch);
 
+            this.pastLocations.add(new PastLocation(lastX, lastY, lastZ, lastYaw, lastPitch));
+
             if(clientGround && serverGround && mathGround) {
                 this.lastLocationOnGround = new Location(data.getPlayer().getWorld(), lastX, Math.round(lastY), lastZ);
             }
@@ -107,7 +116,7 @@ public class MovementData extends Data {
     public void handleCollision() {
         blocks.clear();
 
-        BoundingBox boundingBox = new BoundingBox(data.getPlayer()).expand(0, 0, 0.55, 0.6, 0, 0);
+        this.boundingBox = new AxisAlignedBB(data.getPlayer()).expand(0, 0, 0.55, 0.6, 0, 0);
 
         double minX = boundingBox.getMinX();
         double minY = boundingBox.getMinY();
@@ -145,7 +154,7 @@ public class MovementData extends Data {
     }
 
     public boolean isBridging() {
-        return to.clone().subtract(0, 2, 0).getBlock().getType() == Material.AIR;
+        return getTo().subtract(0, 2, 0).getBlock().getType() == Material.AIR;
     }
 
 }

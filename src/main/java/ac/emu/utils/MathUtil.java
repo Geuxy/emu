@@ -9,6 +9,21 @@ public class MathUtil {
         return Math.sqrt((a * a) + (b * b));
     }
 
+    public static float hypot(float a, float b) {
+        return (float) Math.sqrt((a * a) + (b * b));
+    }
+
+    // For a 3-dimensional vector, V = (a, b, c) the magnitude is given by √(a2 + b2 + c2).
+    public static double mag(double... values) {
+        double magnitude = 0;
+
+        for(double value : values) {
+            magnitude += value * value;
+        }
+
+        return Math.sqrt(magnitude);
+    }
+
     // By PhoenixHaven
     public static double getAngleRotation(Location loc1, Location loc2) {
         if (loc1 == null || loc2 == null) return -1;

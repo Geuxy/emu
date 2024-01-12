@@ -26,25 +26,25 @@ public class CommandManager implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, org.bukkit.command.Command useless, String label, String[] args) {
-        try {
-            Command command = commands.stream().filter(c -> c.getName().equalsIgnoreCase(args[0])).findFirst().orElse(null);
-            if(!sender.hasPermission(command.getPermission())) {
-                sender.sendMessage("§cNo permission!");
-                return false;
-            }
+        Command command = commands.stream().filter(c -> c.getName().equalsIgnoreCase(args[0])).findFirst().orElse(null);
 
-            if(command.isPlayerOnly() && sender instanceof ConsoleCommandSender) {
-                sender.sendMessage("§cOnly players can use this command!");
-                return false;
-            }
-
-            command.perform(sender, args);
-            return true;
-
-        } catch(Exception e) {
-            sender.sendMessage("§cFailed to execute command!");
+        if(command == null) {
+            sender.sendMessage("§cInvalid Command!");
             return false;
         }
+
+        if(command.isPlayerOnly() && sender instanceof ConsoleCommandSender) {
+            sender.sendMessage("§cOnly players can use this command!");
+            return false;
+        }
+
+        if(!sender.hasPermission(command.getPermission())) {
+            sender.sendMessage("§cNo permission!");
+            return false;
+        }
+
+        command.perform(sender, args);
+        return true;
     }
 
 }

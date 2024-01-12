@@ -2,14 +2,14 @@ package ac.emu.check.impl.speed;
 
 import ac.emu.check.Check;
 import ac.emu.check.CheckInfo;
-import ac.emu.data.PlayerData;
+import ac.emu.user.EmuPlayer;
 import ac.emu.exempt.ExemptType;
 import ac.emu.packet.Packet;
 
 @CheckInfo(name = "Speed", description = "Invalid horizontal movement in air", type = "A")
 public class SpeedA extends Check {
 
-    public SpeedA(PlayerData data) {
+    public SpeedA(EmuPlayer data) {
         super(data);
     }
 
@@ -39,11 +39,9 @@ public class SpeedA extends Check {
                 boolean invalid = difference > 1E-4 && speed > 0.1;
 
                 if (invalid && !exempt) {
-                    if (thriveBuffer() > 1) {
-                        this.fail(String.format("tick=%d, diff=%.5f, predicted=%.5f, speed=%.5f", airTicks, difference, predicted, speed));
-                    }
+                    this.fail(String.format("tick=%d, diff=%.5f, predicted=%.5f, speed=%.5f", airTicks, difference, predicted, speed));
                 }
-                this.decayBuffer(0.02);
+                this.reward();
             }
         }
     }

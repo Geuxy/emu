@@ -1,17 +1,17 @@
 package ac.emu.data.impl;
 
-import ac.emu.data.PlayerData;
+import ac.emu.user.EmuPlayer;
+import ac.emu.exempt.ExemptType;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-
-import ac.emu.exempt.ExemptType;
 
 import java.util.Arrays;
 
 @RequiredArgsConstructor @Getter
 public class ExemptData {
 
-    private final PlayerData data;
+    private final EmuPlayer data;
 
     public boolean isExempt(ExemptType exempt) {
         return exempt.getFunction().apply(data);

@@ -4,7 +4,7 @@ import lombok.Getter;
 
 import ac.emu.utils.StaffUtil;
 import ac.emu.config.ConfigValues;
-import ac.emu.data.PlayerData;
+import ac.emu.user.EmuPlayer;
 import ac.emu.exempt.ExemptType;
 import ac.emu.packet.Packet;
 
@@ -12,61 +12,76 @@ import ac.emu.packet.Packet;
 public abstract class Check {
 
     protected final CheckInfo info;
-    protected final PlayerData data;
+    protected final EmuPlayer data;
+
+    private String display;
 
     private int level;
     private int maximumLevel;
 
-    private double buffer;
-    private double minimumBuffer;
+    private double currentBuffer;
+    private double flagBuffer;
+    private double decay;
 
     private boolean enabled;
     private boolean punishable;
 
-    public Check(PlayerData data) {
+    public Check(EmuPlayer data) {
         this.data = data;
         this.info = this.getClass().getAnnotation(CheckInfo.class);
-        this.minimumBuffer = ConfigValues.getMinBuffer(this);
+        this.flagBuffer = ConfigValues.getFlagBuffer(this);
         this.maximumLevel = ConfigValues.getMaxLevel(this);
         this.enabled = ConfigValues.isEnabled(this);
         this.punishable = ConfigValues.isPunishable(this);
-        this.buffer = minimumBuffer;
+        this.decay = ConfigValues.getBufferDecay(this);
+        this.display = ConfigValues.getDisplay(this);
+        this.currentBuffer = 0;
     }
 
     public abstract void processPacket(Packet packet);
+
+    protected void reward() {
+        this.decayBuffer(decay);
+    }
 
     public void fail() {
         this.fail("");
     }
 
-    public void fail(String values) {
+    public boolean fail(String values) {
+        if(thriveBuffer() <= flagBuffer) {
+            return false;
+        }
+
         this.level++;
 
-        StaffUtil.sendAlert(ConfigValues.MESSAGE_FAIL.stringValue().replace("{values}", values), this, data.getPlayer());
+        StaffUtil.sendAlert(ConfigValues.MESSAGE_FAIL.stringValue().replace("{display}", display).replace("{values}", values), this, data.getPlayer());
 
         if(level >= maximumLevel) {
-            if(isPunishable()) {
+            if(punishable) {
                 // TODO: Punish player with custom command
 
             }
             this.level = 0;
         }
+
+        return true;
     }
 
     public double thriveBuffer() {
-        return this.buffer = Math.min(100, this.buffer + 1);
+        return this.currentBuffer = Math.min(100, this.currentBuffer + 1);
     }
 
     public double decayBuffer(double buffer) {
-        return this.buffer = Math.max(minimumBuffer, this.buffer - buffer);
+        return this.currentBuffer = Math.max(0, this.currentBuffer - buffer);
     }
 
     public double resetBuffer() {
-        return this.buffer = minimumBuffer;
+        return this.currentBuffer = 0;
     }
 
-    public boolean isExempt(ExemptType... exempts) {
-        return data.getExemptData().isExempt(exempts);
+    public boolean isExempt(ExemptType... types) {
+        return data.getExemptData().isExempt(types);
     }
 
 }

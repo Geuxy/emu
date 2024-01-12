@@ -15,6 +15,7 @@ message:
   # {info} - reason why the player failed
   # {type} - the check type
   # {values} - details about the fail (what tick, difference in delta, etc.)
+  # {display} - "check.display" value
   fail: "{prefix} &6{player} &7failed &6{check} ({type}) &7x{level}"
 
   # Warning sent when a player gets teleported by the ghost block processor
@@ -23,179 +24,374 @@ message:
   # {player} - player's name that was teleported
   gbp: "{prefix} &7[&6Warning&7] &6{player} &7was on a ghost block"
 
+  # Message sent when a player sends an invalid sub command
+  # Prefixes:
+  # {prefix} - prefix from first value
+  # {player} - player's name that was teleported
+  invalid-command: "{prefix} &cInvalid command!"
+
+# Check Guide -------------------
+check-name:
+  display: "Check Name" # What should the display name of the check be?
+  enabled: true # Should this check be used?
+  punishment: "ban" # How will this check punish the player? (kick, ban, none)
+  max-level: 5 # How many levels until punishing the player?
+
+  buffer:
+    flag: 2 # How many times can the player flag without alerting staff?
+    decay: 0.025 # How fast should the buffer decay when not flagging?
+# -------------------------
+
+punishments:
+  kick: "/kick {player}"
+  ban: "/msg {player} get detected!!"
+
 checks:
-
-  velocity:
-    a: # Vertical velocity
-      enabled: true
-      punishable: true
-      max-level: 20
-      min-buffer: 0
-
-    b: # Horizontal velocity
-      enabled: true
-      punishable: true
-      max-level: 20
-      min-buffer: 0
-
-
   climb:
-    a: # Speed on ladder
+    a: # Horizontal movement on ladders
+      display: "Climb"
       enabled: true
-      punishable: true
+      punishment: "ban"
       max-level: 5
-      min-buffer: 0
 
-    b: # Height on ladder
+      buffer:
+        flag: 2
+        decay: 0.025
+
+    b: # Vertical movement on ladders
+      display: "Climb"
       enabled: true
-      punishable: true
-      max-level: 15
-      min-buffer: 0
+      punishment: "ban"
+      max-level: 5
+
+      buffer:
+        flag: 2
+        decay: 0.02
 
   fly:
-    a: # Prediction in air
+    a: # Vertical movement prediction in air
+      display: "Fly"
       enabled: true
-      punishable: true
-      max-level: 20
-      min-buffer: 0
+      punishment: "ban"
+      max-level: 15
+
+      buffer:
+        flag: 2
+        decay: 0.01
 
     b: # Sudden motion reduction
+      display: "Fly"
       enabled: true
-      punishable: true
-      max-level: 5
-      min-buffer: 0
-
-  jesus:
-    a: # Horizontal movement in liquid
-      enabled: true
-      punishable: true
+      punishment: "ban"
       max-level: 15
-      min-buffer: 0
 
-    b: # Vertical movement in liquid
-      enabled: true
-      punishable: true
-      max-level: 20
-      min-buffer: 0
-
-  jump:
-    a: # Max jump height
-      enabled: true
-      punishable: true
-      max-level: 20
-      min-buffer: 0
-    b: # Max speed on jump
-      enabled: true
-      punishable: true
-      max-level: 20
-      min-buffer: 0
-
-  noslow:
-    a: # Speed in web
-      enabled: true
-      punishable: true
-      max-level: 5
-      min-buffer: 0
-
-  speed:
-    a: # Prediction in air
-      enabled: true
-      punishable: true
-      max-level: 20
-      min-buffer: 0
-
-    b: # Max speed on ground
-      enabled: true
-      punishable: true
-      max-level: 30
-      min-buffer: 0
-
-    c: # Max speed one tick after jumping
-      enabled: true
-      punishable: true
-      max-level: 3
-      min-buffer: 0
-
-    d: # Max speed
-      enabled: true
-      punishable: true
-      max-level: 3
-      min-buffer: 0
-
-  move:
-    a: # Invalid jump (ground speed detection)
-      enabled: true
-      punishable: true
-      max-level: 20
-      min-buffer: 0
-
-  step:
-    a: # Full block step
-      enabled: true
-      punishable: true
-      max-level: 5
-      min-buffer: 0
-
-    b: # Reverse / Fast fall
-      enabled: true
-      punishable: true
-      max-level: 3
-      min-buffer: 0
-
-    c: # Multi packet step
-      enabled: true
-      punishable: true
-      max-level: 3
-      min-buffer: 0
-
-  strafe:
-    a: # Prediction strafe
-      enabled: true
-      punishable: true
-      max-level: 20
-      min-buffer: 0
-
-  badpackets:
-    a: # Impossible pitch
-      enabled: true
-      punishable: true
-      max-level: 1
-      min-buffer: 0
-
-    b: # Place Dig on same tick
-      enabled: true
-      punishable: true
-      max-level: 1
-      min-buffer: 0
-
-    c: # Quick slot switching
-      enabled: true
-      punishable: true
-      max-level: 1
-      min-buffer: 0
-
-  timer:
-    a: # 50s
-      enabled: true
-      punishable: true
-      max-level: 25
-      min-buffer: 0
-
-    b: # 50s
-      enabled: true
-      punishable: true
-      max-level: 25
-      min-buffer: 0
-
-    c: # Average
-      enabled: true
-      punishable: true
-      max-level: 25
-      min-buffer: 0
+      buffer:
+        flag: 2
+        decay: 0.01
 
   ground:
     a: # Ground spoof
+      display: "Ground"
       enabled: true
-      punishable: true
+      punishment: "ban"
       max-level: 5
-      min-buffer: 0
+
+      buffer:
+        flag: 2
+        decay: 0.025
+
+  hitbox:
+    a: # Missed hitbox
+      display: "Hitbox"
+      enabled: true
+      punishment: "ban"
+      max-level: 5
+
+      buffer:
+        flag: 2
+        decay: 0.01
+
+  jesus:
+    a: # Horizontal movement in liquid
+      display: "Jesus"
+      enabled: true
+      punishment: "ban"
+      max-level: 10
+
+      buffer:
+        flag: 2
+        decay: 0.05
+
+    b: # Vertical movement in liquid
+      display: "Jesus"
+      enabled: true
+      punishment: "ban"
+      max-level: 15
+
+      buffer:
+        flag: 2
+        decay: 0.02
+
+  jump:
+    a: # Vertical movement after jumping
+      display: "Jump"
+      enabled: true
+      punishment: "ban"
+      max-level: 5
+
+      buffer:
+        flag: 0
+        decay: 100
+
+    b: # Horizontal movement after jumping
+      display: "Jump"
+      enabled: true
+      punishment: "ban"
+      max-level: 15
+
+      buffer:
+        flag: 1
+        decay: 0.01
+
+  killaura:
+    a: # Multi Killaura
+      display: "Killaura"
+      enabled: true
+      punishment: "kick"
+      max-level: 5
+
+      buffer:
+        flag: 2
+        decay: 0.2
+
+  move:
+    a: # Negative delta Y jump
+      display: "Move"
+      enabled: true
+      punishment: "ban"
+      max-level: 5
+
+      buffer:
+        flag: 7
+        decay: 0.1
+
+    b: # Impossible movement speed
+      display: "Move"
+      enabled: true
+      punishment: "ban"
+      max-level: 1
+
+      buffer:
+        flag: 0
+        decay: 100
+
+  noslow:
+    a: # Horizontal movement in web
+      display: "No Slow"
+      enabled: true
+      punishment: "ban"
+      max-level: 5
+
+      buffer:
+        flag: 1
+        decay: 0.05
+
+  protocol:
+    a: # Impossible pitch
+      display: "Protocol"
+      enabled: true
+      punishment: "ban"
+      max-level: 1
+
+      buffer:
+        flag: 0
+        decay: 100
+
+    b: # Placed and dug on same tick
+      display: "Protocol"
+      enabled: true
+      punishment: "ban"
+      max-level: 3
+
+      buffer:
+        flag: 2
+        decay: 0.25
+
+    c: # Switching slots too quickly
+      display: "Protocol"
+      enabled: true
+      punishment: "ban"
+      max-level: 3
+
+      buffer:
+        flag: 2
+        decay: 0.25
+
+    d: # Invalid held item change
+      display: "Protocol"
+      enabled: true
+      punishment: "ban"
+      max-level: 1
+
+      buffer:
+        flag: 0
+        decay: 100
+
+    e: # Started and stopped sprint on same tick
+      display: "Protocol"
+      enabled: true
+      punishment: "ban"
+      max-level: 3
+
+      buffer:
+        flag: 2
+        decay: 0.15
+
+    f: # Self-interact
+      display: "Protocol"
+      enabled: true
+      punishment: "ban"
+      max-level: 3
+
+      buffer:
+        flag: 0
+        decay: 100
+
+    g: # Bad sprint
+      display: "Protocol"
+      enabled: true
+      punishment: "ban"
+      max-level: 3
+
+      buffer:
+        flag: 0
+        decay: 100
+
+    h: # No Swing
+      display: "Protocol"
+      enabled: true
+      punishment: "ban"
+      max-level: 3
+
+      buffer:
+        flag: 0
+        decay: 100
+
+    i: # Invalid Digging
+      display: "Protocol"
+      enabled: true
+      punishment: "ban"
+      max-level: 3
+
+      buffer:
+        flag: 0
+        decay: 100
+
+  speed:
+    a: # Horizontal movement prediction in air
+      display: "Speed"
+      enabled: true
+      punishment: "ban"
+      max-level: 10
+
+      buffer:
+        flag: 1
+        decay: 0.02
+
+    b: # Horizontal movement on ground
+      display: "Speed"
+      enabled: true
+      punishment: "ban"
+      max-level: 10
+
+      buffer:
+        flag: 3
+        decay: 0.1
+
+    c: # Horizontal speed after jumping
+      display: "Speed"
+      enabled: true
+      punishment: "ban"
+      max-level: 3
+
+      buffer:
+        flag: 2
+        decay: 0.1
+
+  step:
+    a: # Invalid step height
+      display: "Step"
+      enabled: true
+      punishment: "ban"
+      max-level: 10
+
+      buffer:
+        flag: 0
+        decay: 100
+
+    b: # Fast fall
+      display: "Step"
+      enabled: true
+      punishment: "ban"
+      max-level: 10
+
+      buffer:
+        flag: 0
+        decay: 100
+
+    c: # Multi packet step
+      display: "Step"
+      enabled: true
+      punishment: "ban"
+      max-level: 3
+
+      buffer:
+        flag: 0
+        decay: 100
+
+  strafe:
+    a: # Strafe in air / XZ prediction
+      display: "Strafe"
+      enabled: true
+      punishment: "ban"
+      max-level: 10
+
+      buffer:
+        flag: 5
+        decay: 0.025
+
+  timer:
+    a: # Increased game speed
+      display: "Timer"
+      enabled: true
+      punishment: "ban"
+      max-level: 20
+
+      buffer:
+        flag: 12
+        decay: 0.05
+
+  velocity:
+    a: # Vertical movement on velocity
+      display: "Velocity"
+      enabled: true
+      punishment: "ban"
+      max-level: 10
+
+      buffer:
+        flag: 1
+        decay: 0.1
+
+    b: # Horizontal movement on velocity
+      display: "Velocity"
+      enabled: true
+      punishment: "ban"
+      max-level: 15
+
+      buffer:
+        flag: 1
+        decay: 0.1
+
+
+
+

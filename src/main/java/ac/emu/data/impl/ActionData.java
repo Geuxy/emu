@@ -1,17 +1,17 @@
 package ac.emu.data.impl;
 
 import ac.emu.data.Data;
-import ac.emu.data.PlayerData;
+import ac.emu.user.EmuPlayer;
 import ac.emu.packet.Packet;
 import ac.emu.utils.MathUtil;
+import ac.emu.utils.LimitedList;
+
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.PacketReceiveEvent;
-import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientClientStatus;
-import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPlayerDigging;
+import com.github.retrooper.packetevents.protocol.packettype.PacketType;
+import com.github.retrooper.packetevents.wrapper.play.client.*;
 
 import lombok.Getter;
-
-import ac.emu.utils.LimitedList;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -23,22 +23,18 @@ public class ActionData extends Data {
 
     private int teleportTicks, livingTicks, placeTicks;
 
-    private boolean insideVehicle, lagging, blocking;
+    private boolean insideVehicle, lagging, lastLagging, blocking;
 
     private long ping, flying, lastFlying, deltaFlying;
 
     private double deviation;
 
-    public ActionData(PlayerData data) {
+    public ActionData(EmuPlayer data) {
         super(data);
     }
 
     public void handleTeleport() {
         this.teleportTicks = 0;
-    }
-
-    public void handleSteerVehicle() {
-        this.insideVehicle = true;
     }
 
     @Override
@@ -61,6 +57,7 @@ public class ActionData extends Data {
 
             if(flyingTimes.isFull()) {
                 this.deviation = MathUtil.getVarianceSq(flyingTimes);
+                this.lastLagging = lagging;
                 this.lagging = deviation > 200;
             }
 
@@ -69,7 +66,7 @@ public class ActionData extends Data {
             this.deltaFlying = flying - lastFlying;
         }
 
-        if(packet.isClientStatus()) {
+        if(packet.getType() == PacketType.Play.Client.CLIENT_STATUS) {
             WrapperPlayClientClientStatus wrapper = new WrapperPlayClientClientStatus((PacketReceiveEvent) packet.getEvent());
 
             if(wrapper.getAction() == WrapperPlayClientClientStatus.Action.PERFORM_RESPAWN) {
@@ -77,7 +74,7 @@ public class ActionData extends Data {
             }
         }
 
-        if(packet.isPlayerBlockPlacement()) {
+        if(packet.getType() == PacketType.Play.Client.PLAYER_BLOCK_PLACEMENT) {
             ItemStack item = data.getPlayer().getItemInHand();
 
             if(item != null && item.getType().isBlock() && !item.getType().equals(Material.AIR)) {
@@ -85,14 +82,18 @@ public class ActionData extends Data {
             }
         }
 
-        if(packet.isPlayerDigging()) {
+        if(packet.getType() == PacketType.Play.Client.PLAYER_DIGGING) {
             WrapperPlayClientPlayerDigging wrapper = new WrapperPlayClientPlayerDigging((PacketReceiveEvent) packet.getEvent());
 
             switch(wrapper.getAction()) {
-                case RELEASE_USE_ITEM:
+            case RELEASE_USE_ITEM:
                 this.blocking = true;
                 break;
             }
+        }
+
+        if(packet.getType() == PacketType.Play.Client.STEER_VEHICLE) {
+            this.insideVehicle = true;
         }
     }
 

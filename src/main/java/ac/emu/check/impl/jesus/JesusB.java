@@ -3,7 +3,7 @@ package ac.emu.check.impl.jesus;
 import ac.emu.check.Check;
 import ac.emu.check.CheckInfo;
 import ac.emu.utils.BlockUtils;
-import ac.emu.data.PlayerData;
+import ac.emu.user.EmuPlayer;
 import ac.emu.exempt.ExemptType;
 import ac.emu.packet.Packet;
 
@@ -12,7 +12,7 @@ public class JesusB extends Check {
 
     private int ticks;
 
-    public JesusB(PlayerData data) {
+    public JesusB(EmuPlayer data) {
         super(data);
     }
 
@@ -44,6 +44,8 @@ public class JesusB extends Check {
 
                 if((invalid || invalid2) && !exempt) {
                     this.fail(String.format("tick=%d, diff=%.5f, deltaY=%.5f, lastDeltaY=%.5f", ticks, difference, deltaY, lastDeltaY));
+                } else {
+                    this.reward();
                 }
             } else {
                 this.ticks = 0;

@@ -61,7 +61,7 @@ public class HitboxA extends Check {
 
             boolean exempt = isExempt(ExemptType.CREATIVE, ExemptType.IN_VEHICLE);
 
-            if(intersection && !exempt) {
+            if(!intersection && !exempt) {
                 this.fail("missed=true");
             } else {
                 this.reward();

@@ -1,10 +1,10 @@
 package ac.emu.data.impl;
 
 import ac.emu.data.Data;
-import ac.emu.user.EmuPlayer;
+import ac.emu.data.profile.EmuPlayer;
 import ac.emu.packet.Packet;
-import ac.emu.utils.MathUtil;
-import ac.emu.utils.LimitedList;
+import ac.emu.utils.math.MathUtil;
+import ac.emu.utils.type.LimitedList;
 
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.PacketReceiveEvent;

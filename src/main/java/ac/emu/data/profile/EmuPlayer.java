@@ -1,15 +1,17 @@
-package ac.emu.utils;
+package ac.emu.data.profile;
 
+import ac.emu.data.impl.*;
+import ac.emu.packet.Packet;
 import ac.emu.utils.location.PastLocation;
 import ac.emu.utils.mcp.MathHelper;
+
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerWindowConfirmation;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-
-import ac.emu.user.EmuPlayer;
 
 import org.bukkit.entity.*;
 import org.bukkit.potion.PotionEffect;
@@ -20,9 +22,34 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Getter @RequiredArgsConstructor
-public class PlayerUtil {
+public class EmuPlayer {
 
-    private final EmuPlayer data;
+    private final Player player;
+
+    private final CombatData combatData = new CombatData(this);
+    private final MovementData movementData = new MovementData(this);
+    private final VelocityData velocityData = new VelocityData(this);
+    private final ActionData actionData = new ActionData(this);
+    private final ExemptData exemptData = new ExemptData(this);
+    private final GhostBlockData ghostBlockData = new GhostBlockData(this);
+    private final SetbackData setbackData = new SetbackData(this);
+    private final CheckData checkData = new CheckData(this);
+
+    public void handle(Packet packet) {
+        movementData.handle(packet);
+        velocityData.handle(packet);
+        actionData.handle(packet);
+        setbackData.handle(packet);
+        ghostBlockData.handle(packet);
+        checkData.handle(packet);
+    }
+
+    public short sendTransaction() {
+        short id = (short) ThreadLocalRandom.current().nextInt(Short.MAX_VALUE);
+
+        this.sendPacket(new WrapperPlayServerWindowConfirmation(0, id, false));
+        return id;
+    }
 
     public boolean isOnNewerVersionThan(ClientVersion version) {
         return getClientVersion().isNewerThan(version);
@@ -44,36 +71,8 @@ public class PlayerUtil {
         return getClientVersion() == version;
     }
 
-    public int getAmplifier(PotionEffectType type) {
-        PotionEffect effect = getEffect(type);
-
-        if(effect != null) {
-            return effect.getAmplifier() + 1;
-        }
-
-        return 0;
-    }
-
-    public ClientVersion getClientVersion() {
-        return PacketEvents.getAPI().getPlayerManager().getClientVersion(data.getPlayer());
-    }
-
-    // PhoenixHaven
-    public boolean isNearRideableEntity() {
-        List<Entity> entities = data.getPlayer().getNearbyEntities(5, 5, 5);
-
-        for (Entity entity : entities) {
-            if (entity instanceof Boat || entity instanceof Horse || entity instanceof Minecart) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    // PhoenixHaven
     public boolean isNearBoat() {
-        List<Entity> entities = data.getPlayer().getNearbyEntities(1, 1, 1);
+        List<Entity> entities = player.getNearbyEntities(1, 1, 1);
 
         for (Entity entity : entities) {
             if (entity instanceof Boat) {
@@ -84,15 +83,29 @@ public class PlayerUtil {
         return false;
     }
 
+    public ClientVersion getClientVersion() {
+        return PacketEvents.getAPI().getPlayerManager().getClientVersion(player);
+    }
+
     public double getJumpHeight() {
         return 0.41999998688697815D + (getPotionLevel(PotionEffectType.JUMP) * 0.10000000149011615D);
+    }
+
+    public int getAmplifier(PotionEffectType type) {
+        PotionEffect effect = getEffect(type);
+
+        if(effect != null) {
+            return effect.getAmplifier() + 1;
+        }
+
+        return 0;
     }
 
     public double getSpeedMultiplier() {
         PotionEffect effect = getEffect(PotionEffectType.SPEED);
 
         if(effect != null) {
-            return ((effect.getAmplifier() + 1) * 0.062f) + ((data.getPlayer().getWalkSpeed() - 0.2f) * 1.6f);
+            return ((effect.getAmplifier() + 1) * 0.062f) + ((player.getWalkSpeed() - 0.2f) * 1.6f);
         }
 
         return 0;
@@ -109,7 +122,7 @@ public class PlayerUtil {
     }
 
     public PotionEffect getEffect(PotionEffectType type) {
-        return data.getPlayer().getActivePotionEffects().stream().filter(e -> e.getType().equals(type)).findFirst().orElse(null);
+        return player.getActivePotionEffects().stream().filter(e -> e.getType().equals(type)).findFirst().orElse(null);
     }
 
     public int getPotionLevel(PotionEffectType type) {
@@ -119,35 +132,32 @@ public class PlayerUtil {
     }
 
     public double getBaseGroundSpeed() {
-        return 0.289 + (getPotionLevel(PotionEffectType.SPEED) * 0.062f) + ((data.getPlayer().getWalkSpeed() - 0.2f) * 1.6f);
+        return 0.289 + (getPotionLevel(PotionEffectType.SPEED) * 0.062f) + ((player.getWalkSpeed() - 0.2f) * 1.6f);
+    }
+
+    public double getBaseSpeed(double base) {
+        return base + (getPotionLevel(PotionEffectType.SPEED) * 0.062f) + ((player.getWalkSpeed() - 0.2f) * 1.6f);
     }
 
     public void sendPacket(PacketWrapper<?> wrapper) {
-        PacketEvents.getAPI().getPlayerManager().sendPacket(data.getPlayer(), wrapper);
+        PacketEvents.getAPI().getPlayerManager().sendPacket(player, wrapper);
     }
 
-    public short sendTransaction() {
-        short id = (short) ThreadLocalRandom.current().nextInt(Short.MAX_VALUE);
-
-        this.sendPacket(new WrapperPlayServerWindowConfirmation(0, id, false));
-        return id;
+    public float getEyeHeight(boolean sneak) {
+        return sneak ? 1.54F : 1.62F;
     }
 
     public List<PastLocation> getPastLocations() {
-        int ticks = MathHelper.clamp_int(Math.round((float) data.getActionData().getPing() / 50), 2, 6);
+        int ticks = MathHelper.clamp_int(Math.round((float) actionData.getPing() / 50), 3, 6);
 
         List<PastLocation> locations = new ArrayList<>();
-        List<PastLocation> pastLocations = data.getMovementData().getPastLocations();
+        List<PastLocation> pastLocations = movementData.getPastLocations();
 
         for(int i = 0; i < ticks; i++) {
             locations.add(pastLocations.get(pastLocations.size() - 1 - i));
         }
 
         return locations;
-    }
-
-    public float getEyeHeight(boolean sneak) {
-        return sneak ? 1.54F : 1.62F;
     }
 
 }

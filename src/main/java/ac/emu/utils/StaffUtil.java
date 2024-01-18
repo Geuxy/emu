@@ -2,9 +2,9 @@ package ac.emu.utils;
 
 import ac.emu.check.Check;
 
+import ac.emu.utils.string.StringUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.permissions.Permission;
 
 public class StaffUtil {
 

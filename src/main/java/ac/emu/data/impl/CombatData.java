@@ -1,9 +1,10 @@
 package ac.emu.data.impl;
 
 import ac.emu.data.Data;
-import ac.emu.user.EmuPlayer;
+import ac.emu.data.profile.EmuPlayer;
 import ac.emu.packet.Packet;
 
+import ac.emu.utils.bukkit.BukkitUtil;
 import com.github.retrooper.packetevents.event.PacketReceiveEvent;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientInteractEntity;
@@ -38,7 +39,7 @@ public class CombatData extends Data {
                     return;
                 }
 
-                Player entity = Bukkit.getOnlinePlayers().stream().filter(p -> p.getEntityId() == wrapper.getEntityId()).findFirst().orElse(null);
+                Player entity = BukkitUtil.getPlayer(wrapper.getEntityId());
 
                 if(entity != null) {
                     this.target = entity;

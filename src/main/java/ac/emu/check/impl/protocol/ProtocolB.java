@@ -2,7 +2,7 @@ package ac.emu.check.impl.protocol;
 
 import ac.emu.check.Check;
 import ac.emu.check.CheckInfo;
-import ac.emu.user.EmuPlayer;
+import ac.emu.data.profile.EmuPlayer;
 import ac.emu.packet.Packet;
 
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
@@ -17,7 +17,7 @@ public class ProtocolB extends Check {
     }
 
     @Override
-    public void processPacket(Packet packet) {
+    public void handle(Packet packet) {
         if(packet.getType() == PacketType.Play.Client.PLAYER_BLOCK_PLACEMENT) {
             this.place = true;
         }
@@ -29,6 +29,7 @@ public class ProtocolB extends Check {
         if(packet.isMovement()) {
             if(place && dig) {
                 this.fail();
+
             } else {
                 this.reward();
             }

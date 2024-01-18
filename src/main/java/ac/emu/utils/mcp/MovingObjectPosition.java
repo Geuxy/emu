@@ -2,14 +2,9 @@ package ac.emu.utils.mcp;
 
 public class MovingObjectPosition {
     private BlockPos blockPos;
-    public MovingObjectPosition.MovingObjectType typeOfHit;
+    public MovingObjectType typeOfHit;
     public EnumFacing sideHit;
     public Vec3 hitVec;
-
-    public MovingObjectPosition(Vec3 hitVecIn, EnumFacing facing, BlockPos blockPosIn)
-    {
-        this(MovingObjectType.BLOCK, hitVecIn, facing, blockPosIn);
-    }
 
     public MovingObjectPosition(Vec3 p_i45552_1_, EnumFacing facing)
     {
@@ -30,13 +25,19 @@ public class MovingObjectPosition {
         this.hitVec = hitVecIn;
     }
 
-    public String toString() {
+    public BlockPos getBlockPos()
+    {
+        return this.blockPos;
+    }
+
+    public String toString()
+    {
         return "HitResult{type=" + this.typeOfHit + ", blockpos=" + this.blockPos + ", f=" + this.sideHit + ", pos=" + this.hitVec + '}';
     }
 
-    public static enum MovingObjectType {
-        MISS,
+    public enum MovingObjectType
+    {
         BLOCK,
-        ENTITY;
+        ENTITY
     }
 }

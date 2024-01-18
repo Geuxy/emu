@@ -1,4 +1,4 @@
-package ac.emu.utils;
+package ac.emu.utils.type;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

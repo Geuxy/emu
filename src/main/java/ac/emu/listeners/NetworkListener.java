@@ -5,7 +5,7 @@ import com.github.retrooper.packetevents.event.PacketReceiveEvent;
 import com.github.retrooper.packetevents.event.PacketSendEvent;
 
 import ac.emu.Emu;
-import ac.emu.user.EmuPlayer;
+import ac.emu.data.profile.EmuPlayer;
 import ac.emu.packet.Packet;
 
 public class NetworkListener extends PacketListenerAbstract {

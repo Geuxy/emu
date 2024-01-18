@@ -2,11 +2,11 @@ package ac.emu.check.impl.timer;
 
 import ac.emu.check.Check;
 import ac.emu.check.CheckInfo;
-import ac.emu.user.EmuPlayer;
+import ac.emu.data.profile.EmuPlayer;
 import ac.emu.exempt.ExemptType;
 import ac.emu.packet.Packet;
-import ac.emu.utils.LimitedList;
-import ac.emu.utils.MathUtil;
+import ac.emu.utils.type.LimitedList;
+import ac.emu.utils.math.MathUtil;
 
 import java.util.concurrent.TimeUnit;
 
@@ -22,7 +22,7 @@ public class TimerA extends Check {
     }
 
     @Override
-    public void processPacket(Packet packet) {
+    public void handle(Packet packet) {
         if(packet.isMovement()) {
             boolean exempt = isExempt(
                 ExemptType.TELEPORTED,
@@ -36,8 +36,7 @@ public class TimerA extends Check {
                 return;
             }
 
-            long currentTime = System.nanoTime();
-            long delta = currentTime - lastTime;
+            long delta = packet.getTimeStamp() - lastTime;
 
             this.samples.add(delta);
 
@@ -45,10 +44,10 @@ public class TimerA extends Check {
                 double average = MathUtil.getAverage(samples);
 
                 // TODO: make more strict
-                boolean invalid = average < 49000000L - TimeUnit.MILLISECONDS.toNanos(Math.min(3, data.getActionData().getPing() / 100));
+                boolean invalid = average < 49L - Math.min(3, profile.getActionData().getPing() / 100);
                 boolean invalid2 = !isExempt(ExemptType.LAGGING, ExemptType.LAST_LAGGING) && delta < 3;
 
-                double speed = 50 / (double) TimeUnit.NANOSECONDS.toMillis((long) average);
+                double speed = 50 / average;
 
                 if ((invalid || invalid2) || delta < 5) {
                     if(fail(String.format("gamespeed=%.2f", speed))) {
@@ -58,7 +57,7 @@ public class TimerA extends Check {
                     this.reward();
                 }
             }
-            this.lastTime = currentTime;
+            this.lastTime = packet.getTimeStamp();
         }
     }
 

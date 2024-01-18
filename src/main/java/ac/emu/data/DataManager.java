@@ -1,8 +1,8 @@
-package ac.emu.data.manager;
+package ac.emu.data;
 
 import lombok.Getter;
 
-import ac.emu.user.EmuPlayer;
+import ac.emu.data.profile.EmuPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -27,7 +27,10 @@ public class DataManager {
     }
 
     public EmuPlayer get(Player player) {
-        return dataMap.get(player.getUniqueId());
+        if(player != null) {
+            return dataMap.get(player.getUniqueId());
+        }
+        return null;
     }
 
     public EmuPlayer get(UUID uuid) {

@@ -2,7 +2,7 @@ package ac.emu.check.impl.ground;
 
 import ac.emu.check.Check;
 import ac.emu.check.CheckInfo;
-import ac.emu.user.EmuPlayer;
+import ac.emu.data.profile.EmuPlayer;
 import ac.emu.exempt.ExemptType;
 import ac.emu.packet.Packet;
 
@@ -14,7 +14,7 @@ public class GroundA extends Check {
     }
 
     @Override
-    public void processPacket(Packet packet) {
+    public void handle(Packet packet) {
         if(packet.isMovement()) {
             boolean exempt = isExempt(
                 ExemptType.SPAWNED,
@@ -24,9 +24,9 @@ public class GroundA extends Check {
                 ExemptType.NEAR_WALL
             );
 
-            double mathY = data.getMovementData().getY() % 0.015625;
+            double mathY = profile.getMovementData().getY() % 0.015625;
 
-            if(data.getMovementData().isClientGround() && mathY != 0 && !data.getMovementData().isServerGround() && !exempt) {
+            if(profile.getMovementData().isClientGround() && mathY != 0 && !profile.getMovementData().isServerGround() && !exempt) {
                 this.fail(String.format("math=%.15f", mathY));
             } else {
                 this.reward();

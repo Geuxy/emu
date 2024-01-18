@@ -1,8 +1,7 @@
-package ac.emu.command.manager;
-
-import ac.emu.command.Command;
+package ac.emu.command;
 
 import ac.emu.command.impl.ReloadCommand;
+
 import lombok.Getter;
 
 import org.bukkit.command.CommandExecutor;

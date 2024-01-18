@@ -2,7 +2,7 @@ package ac.emu.check.impl.jesus;
 
 import ac.emu.check.Check;
 import ac.emu.check.CheckInfo;
-import ac.emu.user.EmuPlayer;
+import ac.emu.data.profile.EmuPlayer;
 import ac.emu.exempt.ExemptType;
 import ac.emu.packet.Packet;
 
@@ -16,14 +16,14 @@ public class JesusA extends Check {
     }
 
     @Override
-    public void processPacket(Packet packet) {
+    public void handle(Packet packet) {
         if(packet.isMovement()) {
             boolean exempt = isExempt(
                 ExemptType.TELEPORTED,
                 ExemptType.SPAWNED,
                 ExemptType.ON_CLIMBABLE,
                 ExemptType.ALLOWED_FLIGHT
-            ) || data.getMovementData().isClientGround();
+            ) || profile.getMovementData().isClientGround();
 
             if(isExempt(ExemptType.IN_LIQUID)) {
                 if(ticks < 21) {
@@ -43,12 +43,12 @@ public class JesusA extends Check {
                 this.ticks = 0;
             }
 
-            double speed = data.getMovementData().getSpeed();
-            double lastSpeed = data.getMovementData().getLastSpeed();
+            double speed = profile.getMovementData().getSpeed();
+            double lastSpeed = profile.getMovementData().getLastSpeed();
 
-            double maxSpeed = ticks > 20 ? 0.15 : (lastSpeed * 0.909997) + 2.54711021E-2;
+            double maxSpeed = ticks > 20 ? 0.16 : (lastSpeed * 0.909997) + 2.54711021E-2;
 
-            maxSpeed += data.getUtilities().getSpeedMultiplier();
+            maxSpeed += profile.getSpeedMultiplier();
 
             boolean invalid = isExempt(ExemptType.IN_LIQUID) && speed > maxSpeed && ticks > 16;
 

@@ -2,7 +2,7 @@ package ac.emu.check.impl.climb;
 
 import ac.emu.check.Check;
 import ac.emu.check.CheckInfo;
-import ac.emu.user.EmuPlayer;
+import ac.emu.data.profile.EmuPlayer;
 import ac.emu.exempt.ExemptType;
 import ac.emu.packet.Packet;
 
@@ -14,19 +14,19 @@ public class ClimbB extends Check {
     }
 
     @Override
-    public void processPacket(Packet packet) {
+    public void handle(Packet packet) {
         if(packet.isMovement()) {
-            boolean exempt = isExempt(ExemptType.TELEPORTED, ExemptType.SPAWNED, ExemptType.ALLOWED_FLIGHT) || data.getMovementData().isClientGround();
+            boolean exempt = isExempt(ExemptType.TELEPORTED, ExemptType.SPAWNED, ExemptType.ALLOWED_FLIGHT) || profile.getMovementData().isClientGround();
 
-            int ticks = data.getMovementData().getClimbTicks();
+            int ticks = profile.getMovementData().getClimbTicks();
 
-            double deltaY = data.getMovementData().getDeltaY();
-            double lastDeltaY = data.getMovementData().getLastDeltaY();
+            double deltaY = profile.getMovementData().getDeltaY();
+            double lastDeltaY = profile.getMovementData().getLastDeltaY();
 
             boolean climbing = isExempt(ExemptType.ON_CLIMBABLE) && Math.abs(deltaY - lastDeltaY) < 1E-4;
 
             boolean invalid = ticks > 2 && (deltaY > 0.1178 || deltaY < -0.1501);
-            boolean invalid2 = ticks < 3 && (deltaY > lastDeltaY || deltaY > data.getUtilities().getJumpHeight());
+            boolean invalid2 = ticks < 3 && (deltaY > lastDeltaY || deltaY > profile.getJumpHeight());
 
             if(climbing && (invalid || invalid2) && !exempt) {
                 this.fail(String.format("tick=%d, deltaY=%.5f, min=-0.1501, max=0.1178", ticks, deltaY));

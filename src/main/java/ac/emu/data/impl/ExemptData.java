@@ -1,6 +1,6 @@
 package ac.emu.data.impl;
 
-import ac.emu.user.EmuPlayer;
+import ac.emu.data.profile.EmuPlayer;
 import ac.emu.exempt.ExemptType;
 
 import lombok.Getter;

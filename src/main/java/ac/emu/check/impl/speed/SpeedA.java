@@ -2,7 +2,7 @@ package ac.emu.check.impl.speed;
 
 import ac.emu.check.Check;
 import ac.emu.check.CheckInfo;
-import ac.emu.user.EmuPlayer;
+import ac.emu.data.profile.EmuPlayer;
 import ac.emu.exempt.ExemptType;
 import ac.emu.packet.Packet;
 
@@ -14,9 +14,9 @@ public class SpeedA extends Check {
     }
 
     @Override
-    public void processPacket(Packet packet) {
+    public void handle(Packet packet) {
         if(packet.isMovement()) {
-            if(!data.getMovementData().isLastClientGround() && !data.getMovementData().isClientGround()) {
+            if(!profile.getMovementData().isLastClientGround() && !profile.getMovementData().isClientGround()) {
                 boolean exempt = isExempt(
                     ExemptType.SPAWNED,
                     ExemptType.ALLOWED_FLIGHT,
@@ -28,13 +28,13 @@ public class SpeedA extends Check {
                     ExemptType.EXPLOSION
                 );
 
-                double speed = data.getMovementData().getSpeed();
-                double lastSpeed = data.getMovementData().getLastSpeed();
+                double speed = profile.getMovementData().getSpeed();
+                double lastSpeed = profile.getMovementData().getLastSpeed();
 
                 double predicted = lastSpeed * 0.9100000262260448D + 0.026D;
                 double difference = speed - predicted;
 
-                int airTicks = data.getMovementData().getAirTicks();
+                int airTicks = profile.getMovementData().getAirTicks();
 
                 boolean invalid = difference > 1E-4 && speed > 0.1;
 

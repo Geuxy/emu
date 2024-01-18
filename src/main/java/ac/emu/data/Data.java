@@ -1,7 +1,7 @@
 package ac.emu.data;
 
 import ac.emu.packet.Packet;
-import ac.emu.user.EmuPlayer;
+import ac.emu.data.profile.EmuPlayer;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

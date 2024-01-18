@@ -2,7 +2,7 @@ package ac.emu.check.impl.noslow;
 
 import ac.emu.check.Check;
 import ac.emu.check.CheckInfo;
-import ac.emu.user.EmuPlayer;
+import ac.emu.data.profile.EmuPlayer;
 import ac.emu.exempt.ExemptType;
 import ac.emu.packet.Packet;
 
@@ -16,7 +16,7 @@ public class NoSlowA extends Check {
     }
 
     @Override
-    public void processPacket(Packet packet) {
+    public void handle(Packet packet) {
         if(packet.isMovement()) {
             boolean exempt = isExempt(ExemptType.TELEPORTED, ExemptType.SPAWNED, ExemptType.ALLOWED_FLIGHT, ExemptType.IN_VEHICLE);
 
@@ -28,11 +28,11 @@ public class NoSlowA extends Check {
                 this.ticks = 0;
             }
 
-            double speed = data.getMovementData().getSpeed();
+            double speed = profile.getMovementData().getSpeed();
 
             double maxSpeed = 0.158;
 
-            maxSpeed += data.getUtilities().getSpeedMultiplier();
+            maxSpeed += profile.getSpeedMultiplier();
 
             boolean invalid = ticks > 1 && speed > maxSpeed;
 

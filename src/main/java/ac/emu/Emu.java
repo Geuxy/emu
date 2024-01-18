@@ -1,12 +1,10 @@
 package ac.emu;
 
-import ac.emu.check.manager.CheckManager;
-import ac.emu.command.manager.CommandManager;
-import ac.emu.data.manager.DataManager;
+import ac.emu.command.CommandManager;
+import ac.emu.data.DataManager;
 import ac.emu.listeners.BukkitListener;
 import ac.emu.listeners.NetworkListener;
 
-import ac.emu.tick.TickManager;
 import com.github.retrooper.packetevents.PacketEvents;
 
 import lombok.Getter;
@@ -27,8 +25,6 @@ public enum Emu {
 
     private final Logger logger;
     private final DataManager dataManager;
-    private final CheckManager checkManager;
-    private final TickManager tickManager;
 
     @Setter
     private boolean debug;
@@ -37,10 +33,8 @@ public enum Emu {
 
     Emu() {
         this.logger = Bukkit.getLogger();
-        this.checkManager = new CheckManager();
         this.dataManager = new DataManager();
         this.networkListener = new NetworkListener();
-        this.tickManager = new TickManager();
         this.debug = false;
     }
 
@@ -54,9 +48,7 @@ public enum Emu {
 
         this.plugin = plugin;
 
-        checkManager.onInit();
         dataManager.onInit();
-        tickManager.onInit();
 
         plugin.getCommand("emu").setExecutor(new CommandManager());
 
@@ -65,7 +57,6 @@ public enum Emu {
     }
 
     public void stop() {
-        this.tickManager.onStop();
         PacketEvents.getAPI().getEventManager().unregisterListener(networkListener);
         HandlerList.unregisterAll(this.plugin);
         this.dataManager.getDataMap().clear();

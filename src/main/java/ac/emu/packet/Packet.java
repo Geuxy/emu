@@ -12,10 +12,12 @@ public class Packet {
 
     private final PacketEvent event;
     private final PacketTypeCommon type;
+    private final long timeStamp;
 
     public Packet(PacketEvent event) {
         this.event = event;
         this.type = ((ProtocolPacketEvent<?>) event).getPacketType();
+        this.timeStamp = event.getTimestamp();
     }
 
     public boolean isMovement() {

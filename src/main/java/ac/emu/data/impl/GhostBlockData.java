@@ -2,7 +2,7 @@ package ac.emu.data.impl;
 
 import ac.emu.config.ConfigValues;
 import ac.emu.data.Data;
-import ac.emu.user.EmuPlayer;
+import ac.emu.data.profile.EmuPlayer;
 import ac.emu.packet.Packet;
 import ac.emu.utils.StaffUtil;
 
@@ -45,7 +45,7 @@ public class GhostBlockData extends Data {
             if(onGhostBlock && data.getMovementData().getLastLocationOnGround() != null && ghostBlockTicks > 1 + Math.min(200, ping) / 100) {
                 Location blockLoc = data.getMovementData().getTo().subtract(0, 1, 0);
                 WrapperPlayClientQueryBlockNBT blockNBT = new WrapperPlayClientQueryBlockNBT(ThreadLocalRandom.current().nextInt(Integer.MAX_VALUE), new Vector3i(blockLoc.getBlockX(), blockLoc.getBlockY(), blockLoc.getBlockZ()));
-                data.getUtilities().sendPacket(blockNBT);
+                data.sendPacket(blockNBT);
                 data.getSetbackData().setback();
 
                 StaffUtil.sendAlert(ConfigValues.MESSAGE_GBP.stringValue(), null, data.getPlayer());

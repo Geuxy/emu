@@ -1,7 +1,7 @@
 package ac.emu.data.impl;
 
-import ac.emu.user.EmuPlayer;
-import ac.emu.utils.MathUtil;
+import ac.emu.data.profile.EmuPlayer;
+import ac.emu.utils.math.MathUtil;
 
 import com.github.retrooper.packetevents.event.PacketReceiveEvent;
 import com.github.retrooper.packetevents.event.PacketSendEvent;
@@ -50,7 +50,7 @@ public class VelocityData extends Data {
                 this.lastSpeed = speed;
                 this.speed = MathUtil.hypot(x, z);
 
-                this.velocityID = data.getUtilities().sendTransaction();
+                this.velocityID = data.sendTransaction();
 
                 pending.put(velocityID, new Vector(x, y, z));
                 this.ticksSinceVelocity = 0;

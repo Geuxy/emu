@@ -1,4 +1,4 @@
-package ac.emu.utils;
+package ac.emu.utils.world;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BlockUtils {
+public class BlockUtil {
 
     public static boolean isClimbable(Block block) {
         return isMaterial(block, Material.LADDER) || isMaterial(block, Material.VINE);

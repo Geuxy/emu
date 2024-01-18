@@ -1,5 +1,6 @@
-package ac.emu.utils;
+package ac.emu.utils.math;
 
+import ac.emu.utils.type.LimitedList;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
@@ -14,7 +15,7 @@ public class MathUtil {
     }
 
     // For a 3-dimensional vector, V = (a, b, c) the magnitude is given by √(a2 + b2 + c2).
-    public static double mag(double... values) {
+    public static double magnitude(double... values) {
         double magnitude = 0;
 
         for(double value : values) {

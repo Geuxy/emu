@@ -2,7 +2,7 @@ package ac.emu.check.impl.protocol;
 
 import ac.emu.check.Check;
 import ac.emu.check.CheckInfo;
-import ac.emu.user.EmuPlayer;
+import ac.emu.data.profile.EmuPlayer;
 import ac.emu.packet.Packet;
 
 import com.github.retrooper.packetevents.event.PacketReceiveEvent;
@@ -19,7 +19,7 @@ public class ProtocolD extends Check {
     }
 
     @Override
-    public void processPacket(Packet packet) {
+    public void handle(Packet packet) {
         if(packet.getType() == PacketType.Play.Client.HELD_ITEM_CHANGE) {
             WrapperPlayClientHeldItemChange wrapper = new WrapperPlayClientHeldItemChange((PacketReceiveEvent) packet.getEvent());
 
@@ -27,6 +27,7 @@ public class ProtocolD extends Check {
 
             if(slot == currentSlot) {
                 this.fail("slot=" + currentSlot);
+
             } else {
                 this.reward();
             }

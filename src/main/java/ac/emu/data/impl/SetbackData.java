@@ -2,7 +2,7 @@ package ac.emu.data.impl;
 
 import ac.emu.Emu;
 import ac.emu.data.Data;
-import ac.emu.user.EmuPlayer;
+import ac.emu.data.profile.EmuPlayer;
 import ac.emu.packet.Packet;
 
 import lombok.Getter;
@@ -14,11 +14,8 @@ public class SetbackData extends Data {
 
     private int ticksSinceSetback;
 
-    private long lastSetback;
-
     public SetbackData(EmuPlayer data) {
         super(data);
-        this.lastSetback = System.currentTimeMillis();
     }
 
     @Override
@@ -30,9 +27,8 @@ public class SetbackData extends Data {
 
     public void setback() {
         if(ticksSinceSetback > 5) {
-            Bukkit.getScheduler().runTask(Emu.INSTANCE.getPlugin(), () -> data.getPlayer().teleport(data.getMovementData().getLastLocationOnGround().clone()));
+            Bukkit.getScheduler().runTask(Emu.INSTANCE.getPlugin(), () -> data.getPlayer().teleport(data.getMovementData().getLastLocationOnGround()));
             this.ticksSinceSetback = 0;
-            this.lastSetback = System.currentTimeMillis();
         }
     }
 

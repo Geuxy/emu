@@ -2,7 +2,7 @@ package ac.emu.check.impl.move;
 
 import ac.emu.check.Check;
 import ac.emu.check.CheckInfo;
-import ac.emu.user.EmuPlayer;
+import ac.emu.data.profile.EmuPlayer;
 import ac.emu.exempt.ExemptType;
 import ac.emu.packet.Packet;
 
@@ -14,11 +14,11 @@ public class MoveB extends Check {
     }
 
     @Override
-    public void processPacket(Packet packet) {
+    public void handle(Packet packet) {
         if(packet.isMovement()) {
-            double deltaX = data.getMovementData().getDeltaX();
-            double deltaY = data.getMovementData().getDeltaY();
-            double deltaZ = data.getMovementData().getDeltaZ();
+            double deltaX = profile.getMovementData().getDeltaX();
+            double deltaY = profile.getMovementData().getDeltaY();
+            double deltaZ = profile.getMovementData().getDeltaZ();
 
             boolean exempt = isExempt(
                 ExemptType.TELEPORTED,

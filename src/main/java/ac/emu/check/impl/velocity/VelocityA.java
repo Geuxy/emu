@@ -2,7 +2,7 @@ package ac.emu.check.impl.velocity;
 
 import ac.emu.check.Check;
 import ac.emu.check.CheckInfo;
-import ac.emu.user.EmuPlayer;
+import ac.emu.data.profile.EmuPlayer;
 import ac.emu.exempt.ExemptType;
 import ac.emu.packet.Packet;
 
@@ -14,13 +14,13 @@ public class VelocityA extends Check {
     }
 
     @Override
-    public void processPacket(Packet packet) {
-        if (packet.isMovement() && data.getVelocityData().getTicksSinceVelocityPong() <= 2) {
-            int ticks = data.getVelocityData().getTicksSinceVelocityPong();
+    public void handle(Packet packet) {
+        if (packet.isMovement() && profile.getVelocityData().getTicksSinceVelocityPong() <= 2) {
+            int ticks = profile.getVelocityData().getTicksSinceVelocityPong();
 
-            double deltaY = data.getMovementData().getDeltaY();
-            double lastDeltaY = data.getMovementData().getLastDeltaY();
-            double velocityY = data.getVelocityData().getY();
+            double deltaY = profile.getMovementData().getDeltaY();
+            double lastDeltaY = profile.getMovementData().getLastDeltaY();
+            double velocityY = profile.getVelocityData().getY();
 
             double predicted = ((isExempt(ExemptType.LAST_JUMPED) ? lastDeltaY : velocityY) - 0.08D) * 0.9800000190734863;
             double difference = Math.abs(deltaY - (ticks > 1 ? predicted : velocityY));

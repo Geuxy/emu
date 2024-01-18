@@ -1,4 +1,4 @@
-package ac.emu.utils;
+package ac.emu.utils.string;
 
 import ac.emu.check.Check;
 import ac.emu.config.ConfigValues;

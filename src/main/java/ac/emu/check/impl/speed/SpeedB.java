@@ -2,7 +2,7 @@ package ac.emu.check.impl.speed;
 
 import ac.emu.check.Check;
 import ac.emu.check.CheckInfo;
-import ac.emu.user.EmuPlayer;
+import ac.emu.data.profile.EmuPlayer;
 import ac.emu.exempt.ExemptType;
 import ac.emu.packet.Packet;
 
@@ -16,13 +16,13 @@ public class SpeedB extends Check {
     }
 
     @Override
-    public void processPacket(Packet packet) {
-        if(packet.isMovement() && data.getMovementData().isClientGround()) {
-            int groundTicks = data.getMovementData().getGroundTicks();
-            int lastAirTicks = data.getMovementData().getLastAirTicks();
-            int sinceOnIceTicks = data.getMovementData().getSinceOnIceTicks();
+    public void handle(Packet packet) {
+        if(packet.isMovement() && profile.getMovementData().isClientGround()) {
+            int groundTicks = profile.getMovementData().getGroundTicks();
+            int lastAirTicks = profile.getMovementData().getLastAirTicks();
+            int sinceOnIceTicks = profile.getMovementData().getSinceOnIceTicks();
 
-            double speed = data.getMovementData().getSpeed();
+            double speed = profile.getMovementData().getSpeed();
 
             boolean exempt = isExempt(
                 ExemptType.VELOCITY,
@@ -32,7 +32,7 @@ public class SpeedB extends Check {
                 ExemptType.IN_VEHICLE
             );
 
-            double maxSpeed = data.getUtilities().getBaseGroundSpeed();
+            double maxSpeed = profile.getBaseGroundSpeed();
 
             this.offSlimeTicks = isExempt(ExemptType.ON_SLIME) ? 0 : ++offSlimeTicks;
 
@@ -40,8 +40,12 @@ public class SpeedB extends Check {
                 maxSpeed += groundTicks == 1 ? (lastAirTicks >= 11 && lastAirTicks <= 12 ? 0.024 : 0.122) : (0.226 / groundTicks);
             }
 
-            if(isExempt(ExemptType.NEAR_STAIRS) || data.getMovementData().getSinceUnderBlockTicks() < 7) {
+            if(isExempt(ExemptType.NEAR_STAIRS) || profile.getMovementData().getSinceUnderBlockTicks() < 7) {
                 maxSpeed += 0.91;
+            }
+
+            if(isExempt(ExemptType.NEAR_SLABS)) {
+                maxSpeed += 0.05;
             }
 
             if(sinceOnIceTicks < 20 || offSlimeTicks < 20) {

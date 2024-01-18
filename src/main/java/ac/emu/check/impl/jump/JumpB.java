@@ -2,10 +2,9 @@ package ac.emu.check.impl.jump;
 
 import ac.emu.check.Check;
 import ac.emu.check.CheckInfo;
-import ac.emu.user.EmuPlayer;
+import ac.emu.data.profile.EmuPlayer;
 import ac.emu.exempt.ExemptType;
 import ac.emu.packet.Packet;
-import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionEffectType;
 
 @CheckInfo(name = "Jump", description = "Invalid horizontal movement after jumping", type = "B")
@@ -16,10 +15,10 @@ public class JumpB extends Check {
     }
 
     @Override
-    public void processPacket(Packet packet) {
+    public void handle(Packet packet) {
         if(packet.isMovement()) {
-            if(data.getMovementData().isLastClientGround() && !data.getMovementData().isClientGround()) {
-                double speed = data.getMovementData().getSpeed();
+            if(profile.getMovementData().isLastClientGround() && !profile.getMovementData().isClientGround()) {
+                double speed = profile.getMovementData().getSpeed();
 
                 double maxSpeed = 0.62;
 
@@ -27,11 +26,11 @@ public class JumpB extends Check {
                     maxSpeed += 0.91;
                 }
 
-                if (data.getMovementData().getSinceOnIceTicks() < 20 || isExempt(ExemptType.ON_SLIME)) {
+                if (profile.getMovementData().getSinceOnIceTicks() < 20 || isExempt(ExemptType.ON_SLIME)) {
                     maxSpeed += 0.57;
                 }
 
-                maxSpeed += 0.02759 * data.getUtilities().getAmplifier(PotionEffectType.SPEED);
+                maxSpeed += 0.02759 * profile.getAmplifier(PotionEffectType.SPEED);
 
                 double difference = speed - maxSpeed;
 
@@ -49,7 +48,7 @@ public class JumpB extends Check {
                     ExemptType.STEPPING
                 );
 
-                boolean step = data.getMovementData().isLastMathGround() && data.getMovementData().isMathGround();
+                boolean step = profile.getMovementData().isLastMathGround() && profile.getMovementData().isMathGround();
 
                 boolean invalid = difference > 0.0342 && !step;
 

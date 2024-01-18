@@ -1,24 +1,29 @@
 package ac.emu.data.impl;
 
 import ac.emu.data.Data;
-import ac.emu.user.EmuPlayer;
+import ac.emu.data.profile.EmuPlayer;
 import ac.emu.packet.Packet;
-import ac.emu.utils.*;
 import ac.emu.exempt.ExemptType;
 
 import ac.emu.utils.location.PastLocation;
+import ac.emu.utils.math.MathUtil;
 import ac.emu.utils.mcp.AxisAlignedBB;
+import ac.emu.utils.type.LimitedList;
+import ac.emu.utils.world.BlockUtil;
 import com.github.retrooper.packetevents.event.PacketReceiveEvent;
+import com.github.retrooper.packetevents.event.PacketSendEvent;
+import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPlayerFlying;
 
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerPlayerPositionAndLook;
 import lombok.Getter;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Getter
 public class MovementData extends Data {
@@ -30,7 +35,7 @@ public class MovementData extends Data {
     private double deltaX, deltaY, deltaZ, lastDeltaX, lastDeltaY, lastDeltaZ;
     private double speed, lastSpeed;
 
-    private boolean clientGround, lastClientGround, serverGround, mathGround, lastMathGround, position, lastPosition;
+    private boolean clientGround, lastClientGround, serverGround, lastServerGround, mathGround, lastMathGround, position, lastPosition;
 
     private int groundTicks, airTicks, climbTicks, lastGroundTicks, lastAirTicks, lastClimbTicks, sinceInVehicleTicks, sinceUnderBlockTicks, sinceOnIceTicks;
 
@@ -39,6 +44,8 @@ public class MovementData extends Data {
     private final LimitedList<PastLocation> pastLocations = new LimitedList<>(30);
 
     private final List<Block> blocks = new ArrayList<>();
+
+    private final Deque<Vector> teleportList = new ArrayDeque<>();
 
     private AxisAlignedBB boundingBox;
 
@@ -93,6 +100,7 @@ public class MovementData extends Data {
 
             this.lastClientGround = clientGround;
             this.lastMathGround = mathGround;
+            this.lastServerGround = serverGround;
             this.clientGround = wrapper.isOnGround();
             this.serverGround = blocks.stream().anyMatch(b -> b.getType() != Material.AIR);
             this.mathGround = y % 0.015625 == 0;
@@ -110,6 +118,21 @@ public class MovementData extends Data {
             this.lastFlying = System.currentTimeMillis();
 
             this.handleFlying();
+
+            if(position && look) {
+                for(Vector teleport : teleportList) {
+                    if(teleport.getX() == x && teleport.getY() == y && teleport.getZ() == z) {
+                        data.getActionData().handleTeleport();
+                        teleportList.remove(teleport);
+                    }
+                }
+            }
+        }
+
+        if(packet.getType() == PacketType.Play.Server.PLAYER_POSITION_AND_LOOK) {
+            WrapperPlayServerPlayerPositionAndLook wrapper = new WrapperPlayServerPlayerPositionAndLook((PacketSendEvent) packet.getEvent());
+
+            teleportList.add(new Vector(wrapper.getX(), wrapper.getY(), wrapper.getZ()));
         }
     }
 
@@ -128,7 +151,7 @@ public class MovementData extends Data {
         for (double x = minX; x <= maxX; x += (maxX - minX)) {
             for (double y = minY; y <= maxY + 0.01; y += (maxY - minY) / 5) {
                 for (double z = minZ; z <= maxZ; z += (maxZ - minZ)) {
-                    blocks.add(BlockUtils.getBlock(new Location(data.getPlayer().getWorld(), x, y, z)));
+                    blocks.add(BlockUtil.getBlock(new Location(data.getPlayer().getWorld(), x, y, z)));
                 }
             }
         }
@@ -150,7 +173,7 @@ public class MovementData extends Data {
         this.sinceOnIceTicks = data.getExemptData().isExempt(ExemptType.ON_ICE) ? 0 : ++sinceOnIceTicks;
         this.climbTicks = data.getExemptData().isExempt(ExemptType.ON_CLIMBABLE) ? ++climbTicks : 0;
         this.sinceInVehicleTicks = data.getPlayer().isInsideVehicle() ? 0 : ++sinceInVehicleTicks;
-        this.sinceUnderBlockTicks = BlockUtils.getSurroundingBlocks(data.getPlayer(), 2D).stream().anyMatch(b -> b.getType().isSolid()) ? 0 : ++this.sinceUnderBlockTicks;
+        this.sinceUnderBlockTicks = BlockUtil.getSurroundingBlocks(data.getPlayer(), 2D).stream().anyMatch(b -> b.getType().isSolid()) ? 0 : ++this.sinceUnderBlockTicks;
     }
 
     public boolean isBridging() {

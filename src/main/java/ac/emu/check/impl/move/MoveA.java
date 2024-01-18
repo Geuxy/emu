@@ -2,7 +2,7 @@ package ac.emu.check.impl.move;
 
 import ac.emu.check.Check;
 import ac.emu.check.CheckInfo;
-import ac.emu.user.EmuPlayer;
+import ac.emu.data.profile.EmuPlayer;
 import ac.emu.exempt.ExemptType;
 import ac.emu.packet.Packet;
 
@@ -15,12 +15,12 @@ public class MoveA extends Check {
     }
 
     @Override
-    public void processPacket(Packet packet) {
+    public void handle(Packet packet) {
         if(packet.isMovement()) {
-            double deltaY = data.getMovementData().getDeltaY();
+            double deltaY = profile.getMovementData().getDeltaY();
 
-            int airTicks = data.getMovementData().getAirTicks();
-            int lastAirTicks = data.getMovementData().getLastAirTicks();
+            int airTicks = profile.getMovementData().getAirTicks();
+            int lastAirTicks = profile.getMovementData().getLastAirTicks();
 
             boolean exempt = isExempt(
                 ExemptType.TELEPORTED,
@@ -36,10 +36,10 @@ public class MoveA extends Check {
                 ExemptType.SETBACK
             );
 
-            boolean step = data.getMovementData().isLastMathGround() && data.getMovementData().isMathGround();
+            boolean step = profile.getMovementData().isLastMathGround() && profile.getMovementData().isMathGround();
 
             boolean invalid = airTicks == 1 && deltaY > -0.07D && deltaY < 0 && !step;
-            boolean invalid2 = lastAirTicks == 1 && data.getMovementData().isClientGround() && !step;
+            boolean invalid2 = lastAirTicks == 1 && profile.getMovementData().isClientGround() && !step;
 
             if((invalid || invalid2) && !exempt) {
                 this.fail(String.format("deltaY=%.5f", deltaY));

@@ -4,7 +4,7 @@ import lombok.Getter;
 
 import ac.emu.utils.StaffUtil;
 import ac.emu.config.ConfigValues;
-import ac.emu.user.EmuPlayer;
+import ac.emu.data.profile.EmuPlayer;
 import ac.emu.exempt.ExemptType;
 import ac.emu.packet.Packet;
 
@@ -12,7 +12,7 @@ import ac.emu.packet.Packet;
 public abstract class Check {
 
     protected final CheckInfo info;
-    protected final EmuPlayer data;
+    protected final EmuPlayer profile;
 
     private String display;
 
@@ -26,8 +26,8 @@ public abstract class Check {
     private boolean enabled;
     private boolean punishable;
 
-    public Check(EmuPlayer data) {
-        this.data = data;
+    public Check(EmuPlayer profile) {
+        this.profile = profile;
         this.info = this.getClass().getAnnotation(CheckInfo.class);
         this.flagBuffer = ConfigValues.getFlagBuffer(this);
         this.maximumLevel = ConfigValues.getMaxLevel(this);
@@ -38,7 +38,7 @@ public abstract class Check {
         this.currentBuffer = 0;
     }
 
-    public abstract void processPacket(Packet packet);
+    public abstract void handle(Packet packet);
 
     protected void reward() {
         this.decayBuffer(decay);
@@ -55,7 +55,7 @@ public abstract class Check {
 
         this.level++;
 
-        StaffUtil.sendAlert(ConfigValues.MESSAGE_FAIL.stringValue().replace("{display}", display).replace("{values}", values), this, data.getPlayer());
+        StaffUtil.sendAlert(ConfigValues.MESSAGE_FAIL.stringValue().replace("{display}", display).replace("{values}", values), this, profile.getPlayer());
 
         if(level >= maximumLevel) {
             if(punishable) {
@@ -81,7 +81,7 @@ public abstract class Check {
     }
 
     public boolean isExempt(ExemptType... types) {
-        return data.getExemptData().isExempt(types);
+        return profile.getExemptData().isExempt(types);
     }
 
 }

@@ -5,8 +5,8 @@ import ac.emu.check.Check;
 import ac.emu.check.CheckInfo;
 import ac.emu.exempt.ExemptType;
 import ac.emu.packet.Packet;
-import ac.emu.user.EmuPlayer;
-import ac.emu.utils.location.PastLocation;
+import ac.emu.data.profile.EmuPlayer;
+import ac.emu.utils.bukkit.BukkitUtil;
 import ac.emu.utils.mcp.AxisAlignedBB;
 import ac.emu.utils.mcp.MathHelper;
 import ac.emu.utils.mcp.MovingObjectPosition;
@@ -16,79 +16,65 @@ import com.github.retrooper.packetevents.event.PacketReceiveEvent;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientInteractEntity;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.util.Vector;
 
-// This code is based of AHMs HitboxA check
-// https://github.com/Tecnio/AntiHaxerman/blob/master/src/main/java/me/tecnio/ahm/check/impl/hitbox/HitboxA.java
 @CheckInfo(name = "Hitbox", description = "Missed players hitbox", type = "A")
 public class HitboxA extends Check {
-
-    private final boolean[] BOOLEANS = {true, false};
-
-    private EmuPlayer target;
 
     public HitboxA(EmuPlayer data) {
         super(data);
     }
 
     @Override
-    public void processPacket(Packet packet) {
-        if(packet.isMovement() && target != null) {
-            boolean intersection = false;
-
-            double x = target.getMovementData().getX();
-            double y = target.getMovementData().getY();
-            double z = target.getMovementData().getZ();
-
-            AxisAlignedBB box = new AxisAlignedBB(x - 0.4, y - 0.1, z - 0.4, x + 0.4, y + 1.9, z + 0.4);
-
-            if (isExempt(ExemptType.NOT_MOVING)) {
-                box = box.expand(0.03, 0.03, 0.03);
-            }
-
-            for (boolean rotation : BOOLEANS) {
-                for (boolean sneak : BOOLEANS) {
-                    float yaw = rotation ? data.getMovementData().getYaw() : data.getMovementData().getLastYaw();
-                    float pitch = rotation ? data.getMovementData().getPitch() : data.getMovementData().getLastPitch();
-
-                    MovingObjectPosition result = this.rayCast(yaw, pitch, sneak, box);
-
-                    intersection |= result != null && result.hitVec != null;
-                }
-            }
-
-            boolean exempt = isExempt(ExemptType.CREATIVE, ExemptType.IN_VEHICLE);
-
-            if(intersection && !exempt) {
-                this.fail("missed=true");
-            } else {
-                this.reward();
-            }
-
-            this.target = null;
-        }
-
+    public void handle(Packet packet) {
         if(packet.getType() == PacketType.Play.Client.INTERACT_ENTITY) {
             WrapperPlayClientInteractEntity wrapper = new WrapperPlayClientInteractEntity((PacketReceiveEvent) packet.getEvent());
 
             if(wrapper.getAction() == WrapperPlayClientInteractEntity.InteractAction.ATTACK) {
-                Bukkit.getOnlinePlayers().stream().filter(p -> p.getEntityId() == wrapper.getEntityId()).findFirst().ifPresent(player -> this.target = Emu.INSTANCE.getDataManager().get(player));
+                EmuPlayer target = Emu.INSTANCE.getDataManager().get(BukkitUtil.getPlayer(wrapper.getEntityId()));
+
+                if(target == null) {
+                    return;
+                }
+
+                boolean intersection = profile.getPastLocations().stream().anyMatch(l -> {
+                    for (boolean sneak : new boolean[] {true, false}) {
+                        AxisAlignedBB box = target.getMovementData().getBoundingBox().expand(0.1, 0, 0.1);
+
+                        if (isExempt(ExemptType.NOT_MOVING)) {
+                            box = box.expand(0.03, 0.03, 0.03);
+                        }
+
+                        MovingObjectPosition result = this.rayCast(l.getYaw(), l.getPitch(), sneak, box);
+
+                        return (result != null && result.hitVec != null) || isInsideVec(box, l.toVec3());
+                    }
+
+                    return false;
+                });
+
+                boolean exempt = isExempt(ExemptType.CREATIVE, ExemptType.IN_VEHICLE);
+
+                if(!intersection && !exempt) {
+                    this.fail();
+
+                } else {
+                    this.reward();
+                }
             }
         }
     }
 
     private MovingObjectPosition rayCast(float yaw, float pitch, boolean sneak, AxisAlignedBB box) {
-        Location position = data.getMovementData().getFrom();
+        Location position = profile.getMovementData().getFrom();
 
         double lastX = position.getX();
         double lastY = position.getY();
         double lastZ = position.getZ();
 
-        Vec3 vec3 = new Vec3(lastX, lastY + data.getUtilities().getEyeHeight(sneak), lastZ);
+        Vec3 vec3 = new Vec3(lastX, lastY + profile.getEyeHeight(sneak), lastZ);
         Vec3 rotation = this.getVectorForRotation(pitch, yaw);
-        Vec3 vec32 = vec3.add(new Vec3(rotation.xCoord * 3.0D, rotation.yCoord * 3.0D, rotation.zCoord * 3.0D));
+        Vec3 vec32 = vec3.add(new Vec3(rotation.xCoord * 3, rotation.yCoord * 3, rotation.zCoord * 3));
 
         return box.calculateIntercept(vec3, vec32);
     }

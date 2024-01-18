@@ -133,7 +133,7 @@ checks:
         decay: 0.02
 
   jump:
-    a: # Vertical movement after jumping
+    a: # Jump height
       display: "Jump"
       enabled: true
       punishment: "ban"
@@ -143,7 +143,7 @@ checks:
         flag: 0
         decay: 100
 
-    b: # Horizontal movement after jumping
+    b: # Jump max speed
       display: "Jump"
       enabled: true
       punishment: "ban"
@@ -164,6 +164,15 @@ checks:
         flag: 2
         decay: 0.2
 
+    b: # No swing
+      display: "Killaura"
+      enabled: true
+      punishment: "kick"
+      max-level: 5
+
+      buffer:
+        flag: 1
+        decay: 0.01
   move:
     a: # Negative delta Y jump
       display: "Move"
@@ -257,27 +266,7 @@ checks:
         flag: 0
         decay: 100
 
-    g: # Bad sprint
-      display: "Protocol"
-      enabled: true
-      punishment: "ban"
-      max-level: 3
-
-      buffer:
-        flag: 0
-        decay: 100
-
-    h: # No Swing
-      display: "Protocol"
-      enabled: true
-      punishment: "ban"
-      max-level: 3
-
-      buffer:
-        flag: 0
-        decay: 100
-
-    i: # Invalid Digging
+    g: # Invalid block place
       display: "Protocol"
       enabled: true
       punishment: "ban"
@@ -318,6 +307,17 @@ checks:
         flag: 2
         decay: 0.1
 
+  inventory:
+    a: # Invalid movement in gui
+      display: "Inventory"
+      enabled: true
+      punishment: "ban"
+      max-level: 10
+
+      buffer:
+        flag: 0
+        decay: 100
+
   step:
     a: # Invalid step height
       display: "Step"
@@ -334,16 +334,6 @@ checks:
       enabled: true
       punishment: "ban"
       max-level: 10
-
-      buffer:
-        flag: 0
-        decay: 100
-
-    c: # Multi packet step
-      display: "Step"
-      enabled: true
-      punishment: "ban"
-      max-level: 3
 
       buffer:
         flag: 0
@@ -370,6 +360,16 @@ checks:
       buffer:
         flag: 12
         decay: 0.05
+
+    b: # Increased timer balance
+      display: "Timer"
+      enabled: true
+      punishment: "ban"
+      max-level: 20
+
+      buffer:
+        flag: 12
+        decay: 0.001
 
   velocity:
     a: # Vertical movement on velocity
